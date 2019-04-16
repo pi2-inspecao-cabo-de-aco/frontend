@@ -12,17 +12,39 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
+    "apollo-cache-inmemory": "^1.5.1",
+    "apollo-client": "^2.5.1",
+    "apollo-link-context": "^1.0.17",
+    "apollo-link-persisted-queries": "^0.2.2",
+    "apollo-link-state": "^0.4.2",
+    "apollo-link-ws": "^1.0.17",
+    "apollo-upload-client": "^10.0.0",
+    "apollo-utilities": "^1.2.1",
     "axios": "^0.18.0",
-    "quasar": "^1.0.0-beta.0"
+    "graphql": "^14.2.1",
+    "graphql-subscriptions": "^1.1.0",
+    "graphql-tools": "^4.0.4",
+    "graphql-type-json": "^0.3.0",
+    "lodash-es": "^4.17.11",
+    "moment": "^2.24.0",
+    "quasar": "^1.0.0-beta.0",
+    "subscriptions-transport-ws": "^0.9.16",
+    "vue-apollo": "^3.0.0-beta.28"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0-beta.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "cache-loader": "^2.0.1",
     "eslint": "^5.10.0",
     "eslint-loader": "^2.1.1",
     "eslint-plugin-vue": "^5.0.0",
-    "strip-ansi": "=3.0.1"
+    "graphql-cli": "^3.0.11",
+    "graphql-tag": "^2.10.1",
+    "pug": "^2.0.3",
+    "pug-plain-loader": "^1.0.0",
+    "strip-ansi": "=3.0.1",
+    "thread-loader": "^2.1.2"
   },
   "engines": {
     "node": ">= 8.9.0",

@@ -1,11 +1,14 @@
 // Configuration for your app
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000/'
+const BACKEND_URL_WS = process.env.BACKEND_URL_WS || 'ws://localhost:4000/'
 
 module.exports = function (ctx) {
   return {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     boot: [
-      'axios'
+      'axios',
+      'apollo'
     ],
 
     css: [
@@ -57,17 +60,57 @@ module.exports = function (ctx) {
 
     build: {
       scopeHoisting: true,
-      // vueRouterMode: 'history',
+      vueRouterMode: 'history',
       // vueCompiler: true,
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
+      // chainWebpack (cfg) {
+      //   // const cacheDirectory = 'node_modules/.cache/cache-loader'
+      //   const rule = cfg.module
+      //     .rule('gql')
+      //     .test(/\.(gql|graphql)$/)
+      //     .exclude
+      //     .add(/node_modules/)
+      //     .end()
+      //     .use('cache-loader')
+      //     .loader('cache-loader')
+      //     .options({ cacheDirectory })
+      //     .end()
+
+      //   rule
+      //     .use('gql-loader')
+      //     .loader('graphql-tag/loader')
+      //     .end()
+
+      //   cfg.resolve
+      //     .extensions
+      //     .prepend('.mjs')
+      // },
       extendWebpack (cfg) {
+        cfg.module.rules.push({
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: 'javascript/auto'
+        })
         cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
           exclude: /node_modules/
+        })
+        cfg.module.rules.push({
+          test: /\.pug$/,
+          loader: 'pug-plain-loader',
+          exclude: /node_modules/,
+          options: {
+            cache: true
+          }
+        })
+        cfg.module.rules.push({
+          test: /\.(graphql|gql)$/,
+          exclude: /node_modules/,
+          loader: 'graphql-tag/loader'
         })
       }
     },
@@ -75,6 +118,15 @@ module.exports = function (ctx) {
     devServer: {
       // https: true,
       // port: 8080,
+      proxy: {
+        '/graphql': {
+          target: BACKEND_URL
+        },
+        '/graphql': {
+          target: BACKEND_URL_WS,
+          ws: true
+        }
+      },
       open: true // opens browser window automatically
     },
 

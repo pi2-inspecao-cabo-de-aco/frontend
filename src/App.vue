@@ -1,12 +1,25 @@
-<template>
-  <div id="q-app">
-    <router-view />
-  </div>
+<template lang="pug">
+  div#q-app
+    h4 {{ info }}
+    router-view
 </template>
 
 <script>
+import INFO from './graphql/queries/info.gql'
 export default {
-  name: 'App'
+  name: 'App',
+  apollo: {
+    info () {
+      return {
+        query: INFO
+      }
+    }
+  },
+  data () {
+    return {
+      info: ''
+    }
+  }
 }
 </script>
 

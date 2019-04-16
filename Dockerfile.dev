@@ -1,0 +1,14 @@
+FROM node:10-alpine
+
+WORKDIR /web
+
+RUN apk update -y && apk add -y curl
+
+RUN yarn global add @quasar/cli
+
+COPY ./package.json ./yarn.lock /web/
+
+RUN yarn install --prod=false
+
+CMD ["quasar", "dev"]
+
