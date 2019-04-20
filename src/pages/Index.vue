@@ -1,12 +1,33 @@
 <template lang="pug">
-  q-page.index.column.items-center.bg-secondary
+  q-page.full-width.index.column.items-center.bg-secondary
     div.index-container.full-width.q-py-lg
       div.cards.flex.full-width.global-shadow
-        div(v-for="c of cards").card.q-pa-md.q-pb-lg.bg-primary.flex-1.q-ma-sm.shadow-global
+        div(v-for="c of cards").card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 {{ c.title }}
           h1(:class="{ 'text-positive': c.positive }").text-bold {{ c.value }}
-      div.card.full-width.q-mt-lg.bg-primary.text-white.shadow-global.q-pa-md
-        h2 Monitoramentos Anteriores
+      div.card.column.no-wrap.full-width.q-mt-lg.bg-primary.text-white.shadow-global.q-pa-lg
+        div.full-card-title.flex.items-center
+          div.big-title.q-pr-lg Monitoramentos Anteriores
+          q-btn(color="accent" no-caps).btn.no-shadow Novo Monitoramento
+        div.summary-cards.flex.justify-between
+          div(v-for="n in 6").summary-card.flex.q-pa-lg.flex.q-mb-lg.shadow-global
+            q-img(src="../assets/wire-rope-basics-Full.jpg" :ratio="1").q-mr-md
+            div.summary-infos.column
+              div.flex.items-center.q-mb-sm
+                div.label.text-grey-4 Condição:
+                div.value {{ summary.condition }}
+              div.flex.items-center.q-mb-sm
+                div.label.text-grey-4 Data:
+                div.value {{ summary.date }}
+              div.flex.items-center.q-mb-sm
+                div.label.text-grey-4  Tempo de execução:
+                div.value {{ summary.time }}
+              div.flex.items-center.q-mb-sm
+                div.label.text-grey-4  Vida útil:
+                div.value {{ summary.lifespan }}
+              div.flex.items-center.q-mb-sm
+                div.label.text-grey-4  Nível de Alerta:
+                div.value {{ summary.alertLevel }}
 </template>
 
 <style>
@@ -38,7 +59,14 @@ export default {
           value: 'Baixo',
           positive: false
         }
-      ]
+      ],
+      summary: {
+        date: '03/04/2019',
+        time: '7:31',
+        lifespan: 134172,
+        alertLevel: 'Baixo',
+        condition: 'Normal'
+      }
     }
   }
 }
@@ -73,10 +101,33 @@ export default {
     text-align center
     color white
 
-  h2
-    margin 0 0 15px 0
-    text-align left
-    font-size 24px
-    line-height 24px
-    font-weight 500
+.full-card-title
+  margin 0 0 24px 0
+
+.big-title
+  text-align left
+  font-size 24px
+  line-height 24px
+  font-weight 500
+
+.btn
+  padding 10px 25px
+  border-radius 20px !important
+
+.summary-cards
+  flex-wrap wrap
+
+.summary-card
+  width 48%
+  border-radius 5px
+  background #2e435f
+
+  .q-img
+    max-width 150px
+    border-radius 5px
+
+.label
+  font-weight 500
+  margin-right 5px
+  font-size 16px
 </style>

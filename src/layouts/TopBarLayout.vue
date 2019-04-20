@@ -2,7 +2,7 @@
   q-layout(view="hHh lpr fFf")
     page-header
     q-page-container
-      router-view
+        router-view
 </template>
 
 <script>

@@ -19,5 +19,5 @@ export default {
 @import '~quasar-variables'
 
 .logo
-  max-width 55px
+  max-width 60px
 </style>
