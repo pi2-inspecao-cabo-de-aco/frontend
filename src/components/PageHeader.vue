@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-header(reveal).page-header.bg-primary.text-white.shadow-global
+  q-header.page-header.bg-primary.text-white.shadow-global
     q-toolbar.flex.justify-between.q-pa-md
       img(src="../assets/logo2.png").logo
       div.flex
@@ -19,5 +19,5 @@ export default {
 @import '~quasar-variables'
 
 .logo
-  max-width 60px
+  max-width 55px
 </style>

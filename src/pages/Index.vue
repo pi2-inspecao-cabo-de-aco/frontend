@@ -77,6 +77,7 @@ export default {
 
 .index-container
   max-width 950px
+  padding-bottom 120px
 
 .card
   border-radius 5px
