@@ -11,7 +11,7 @@ const routes = [
     path: '/cables',
     component: () => import('layouts/TopBarLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/CablePage.vue') }
+      { path: '', component: () => import('pages/CablesPage.vue') }
     ]
   }
 ]
