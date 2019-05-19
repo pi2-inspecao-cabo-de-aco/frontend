@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     pageTitle () {
-      return this.newCable ? 'Cadastrar novo cabo' : 'Controle de Cabos'
+      return this.newCable ? 'Cadastrar novo cabo' : 'Gerenciamento de Cabos'
     }
   }
 }
