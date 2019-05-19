@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-page.full-width.index.column.items-center.bg-secondary
+  q-page.full-width.index
     div.index-container.full-width.q-py-lg
       div.cards.flex.full-width.global-shadow
         div(v-for="c of cards").card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
@@ -76,7 +76,6 @@ export default {
 @import '~quasar-variables'
 
 .index-container
-  max-width 950px
   padding-bottom 120px
 
 .card

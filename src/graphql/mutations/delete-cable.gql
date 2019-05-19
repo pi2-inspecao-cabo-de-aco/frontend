@@ -1,0 +1,3 @@
+mutation deleteCable ($id: ID!) {
+  deleteCable (id: $id)
+}

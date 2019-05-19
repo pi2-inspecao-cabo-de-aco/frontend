@@ -1,8 +1,9 @@
 <template lang="pug">
-  q-layout(view="hHh lpr lfr")
+  q-layout(view="hHh lpr lfr").bg-secondary
     page-header
-    q-page-container
-      router-view
+    q-page-container.full-width.column.items-center
+      div.container.full-width
+        router-view
       page-footer
 </template>
 
@@ -18,3 +19,8 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+.container
+  max-width 950px
+</style>

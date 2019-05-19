@@ -1,0 +1,10 @@
+query cables {
+  cables {
+    id
+    name
+    general_state
+    lifespan
+    size
+    diameter
+  }
+}
