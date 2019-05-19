@@ -1,0 +1,3 @@
+mutation deleteCable ($size: Int, $lifespan: Int, $name: String, $diameter: Int) {
+  createCable (name: $name, lifespan: $lifespan, size: $size, diameter: $diameter)
+}

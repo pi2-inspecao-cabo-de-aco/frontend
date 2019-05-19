@@ -4,9 +4,9 @@
       div.table-box.full-width.column.bg-grey-2.shadow-global
         div.table.head.full-width.text-grey-8
           div.q-pa-sm Nome
-          div.q-pa-sm Tamanho
-          div.q-pa-sm Diâmetro
-          div.q-pa-sm Vida útil
+          div.q-pa-sm Tamanho (mm)
+          div.q-pa-sm Diâmetro (mm)
+          div.q-pa-sm Vida útil (dias)
         div(v-for="(cable,index) of cables" :key="index").table.cel.full-width.text-grey-8
           div.q-pa-sm {{ cable.name }}
           div.q-pa-sm {{ cable.size }}
@@ -21,12 +21,13 @@
               color="accent"
             )
     div(v-else).text-center.q-pa-lg.column.items-center
-      q-icon(name="mdi-alert-decagram" color="warning" size="50px").q-mb-md
+      q-icon(name="mdi-alert-decagram" color="yellow-9" size="50px").q-mb-md
       div.text-white Nenhum cabo foi cadastrado até o momento
 </template>
 
 <script>
 import CABLES from '../../graphql/queries/cables.gql'
+import DELETE_CABLE from '../../graphql/mutations/delete-cable.gql'
 
 export default {
   name: 'CablesList',
@@ -49,6 +50,23 @@ export default {
   computed: {
     hasCables () {
       return (this.cables || []).length > 0
+    }
+  },
+  methods: {
+    async deleteCable (id) {
+      try {
+        await this.$apollo.mutate({
+          mutation: DELETE_CABLE,
+          variables: {
+            id
+          },
+          refetchQueries: ['cables']
+        })
+        this.$q.notify({ message: 'Cabo removido com sucesso', color: 'positive', icon: 'mdi-check', timeout: 2000 })
+      } catch (err) {
+        this.$q.notify({ message: 'Não foi possível remover o cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
+        throw err
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-page.cable-page.full-width.q-py-lg
+  q-page.cable-page.full-width.q-py-lg.q-mb-xl
     div.page-card.q-pa-lg.bg-primary.shadow-global.column
       div.flex.items-center
         div.big-title.q-pr-lg.text-white {{ pageTitle }}
@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import DELETE_CABLE from '../graphql/mutations/delete-cable.gql'
-
 export default {
   name: 'CablesPage',
   components: {
@@ -31,23 +29,6 @@ export default {
   computed: {
     pageTitle () {
       return this.newCable ? 'Cadastrar novo cabo' : 'Controle de Cabos'
-    }
-  },
-  methods: {
-    async deleteCable (id) {
-      try {
-        await this.$apollo.mutate({
-          mutation: DELETE_CABLE,
-          variables: {
-            id
-          },
-          refetchQueries: ['cables']
-        })
-        this.$q.notify({ message: 'Cabo removido com sucesso', color: 'positive', icon: 'mdi-check', timeout: 2000 })
-      } catch (err) {
-        this.$q.notify({ message: 'Não foi possível remover o cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
-        throw err
-      }
     }
   }
 }
