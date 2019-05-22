@@ -1,6 +1,7 @@
 <template lang="pug">
   q-page.report-page.full-width.q-py-lg.q-mb-xl.flex.items-center
-    div.card.bg-positive.full-width.q-pa-sm.text-center.text-white.q-mb-lg Monitoraramento em andamento
+    div(:class="reporting ? 'bg-grey-5' : 'bg-positive'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
+      | {{ reporting ? 'Monitoramento em pausa' : 'Monitoraramento em andamento' }}
     div.full-width.flex
       q-img(src="../assets/img/cable-concat.jpg" :ratio="1").img.shadow-global.q-mr-lg
       div.report-content.flex-1
@@ -17,9 +18,10 @@
               span Normal
         div.flex.justify-center.q-mb-md
           q-btn(
-            color="positive"
+            @click="reporting = !reporting"
+            :color="reporting ? 'positive' : 'grey-5'"
             round
-            icon="mdi-play"
+            :icon="reporting ? 'mdi-play' : 'mdi-pause'"
             size="24px"
           ).shadow-global
         div.flex.items-center.justify-center
@@ -58,7 +60,12 @@
 
 <script>
 export default {
-  name: 'ReportPage'
+  name: 'ReportPage',
+  data () {
+    return {
+      reporting: false
+    }
+  }
 }
 </script>
 
