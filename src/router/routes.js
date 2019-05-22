@@ -13,6 +13,13 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/CablesPage.vue') }
     ]
+  },
+  {
+    path: '/report',
+    component: () => import('layouts/TopBarLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ReportPage.vue') }
+    ]
   }
 ]
 
