@@ -1,6 +1,5 @@
 <template lang="pug">
-  div
-    q-img(:src="imagePath")
+  q-img(:src="imagePath || '../assets/img/cable-concat.jpg'" :ratio="1").img.shadow-global.q-mr-lg
 </template>
 
 <script>
