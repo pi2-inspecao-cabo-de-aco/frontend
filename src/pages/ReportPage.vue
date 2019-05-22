@@ -1,7 +1,7 @@
 <template lang="pug">
   q-page.report-page.full-width.q-py-lg.q-mb-xl.flex.items-center
-    div(:class="reporting ? 'bg-grey-5' : 'bg-positive'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
-      | {{ reporting ? 'Monitoramento em pausa' : 'Monitoraramento em andamento' }}
+    div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
+      | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
     div.full-width.flex
       q-img(src="../assets/img/cable-concat.jpg" :ratio="1").img.shadow-global.q-mr-lg
       div.report-content.flex-1
@@ -19,9 +19,9 @@
         div.flex.justify-center.q-mb-md
           q-btn(
             @click="reporting = !reporting"
-            :color="reporting ? 'positive' : 'grey-5'"
+            :color="reporting ? 'grey-5' : 'positive'"
             round
-            :icon="reporting ? 'mdi-play' : 'mdi-pause'"
+            :icon="reporting ? 'mdi-pause' : 'mdi-play'"
             size="24px"
           ).shadow-global
         div.flex.items-center.justify-center
@@ -32,7 +32,7 @@
             size="24px"
           ).shadow-global
           q-btn(
-            color="accent"
+            color="warning"
             round
             icon="mdi-alert-circle"
             size="28px"
