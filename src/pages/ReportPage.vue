@@ -44,12 +44,6 @@
             size="24px"
           ).shadow-global
         div.column.items-center.justify-center.q-mt-md
-          //- q-btn(
-          //-   color="grey-5"
-          //-   round
-          //-   icon="mdi-pause"
-          //-   size="24px"
-          //- ).q-my-md.shadow-global
           q-btn(
             color="negative"
             round
