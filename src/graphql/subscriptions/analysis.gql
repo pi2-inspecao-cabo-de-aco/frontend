@@ -1,0 +1,6 @@
+subscription analysisWasCreated {
+  analysisWasCreated {
+    id
+    image_path
+  }
+}

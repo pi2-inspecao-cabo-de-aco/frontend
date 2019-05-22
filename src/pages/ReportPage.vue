@@ -3,7 +3,7 @@
     div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
       | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
     div.full-width.flex
-      q-img(src="../assets/img/cable-concat.jpg" :ratio="1").img.shadow-global.q-mr-lg
+      image-renderer
       div.report-content.flex-1
         div.q-mb-lg.flex
           div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
@@ -55,6 +55,9 @@
 <script>
 export default {
   name: 'ReportPage',
+  components: {
+    ImageRenderer: () => import('../components/ImageRender')
+  },
   data () {
     return {
       reporting: false

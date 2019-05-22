@@ -125,6 +125,9 @@ module.exports = function (ctx) {
         '/graphql': {
           target: BACKEND_URL_WS,
           ws: true
+        },
+        '/public': {
+          target: BACKEND_URL
         }
       },
       open: true // opens browser window automatically
