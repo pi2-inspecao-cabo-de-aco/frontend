@@ -18,7 +18,7 @@
               span Normal
         div.flex.justify-center.q-mb-md
           q-btn(
-            @click="reporting = !reporting"
+            @click="sendStartOrPauseCommand"
             :color="reporting ? 'grey-5' : 'positive'"
             round
             :icon="reporting ? 'mdi-pause' : 'mdi-play'"
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { start, pause } from '../api/commands'
 export default {
   name: 'ReportPage',
   components: {
@@ -61,6 +62,22 @@ export default {
   data () {
     return {
       reporting: false
+    }
+  },
+  methods: {
+    async sendStartOrPauseCommand () {
+      try {
+        if (!this.reporting) {
+          this.reporting = !this.reporting
+          await start()
+        } else {
+          this.reporting = !this.reporting
+          await pause()
+        }
+      } catch (err) {
+        this.reporting = false
+        console.log(err)
+      }
     }
   }
 }
