@@ -8,7 +8,7 @@
       div.card.column.no-wrap.full-width.q-mt-lg.bg-primary.text-white.shadow-global.q-pa-lg
         div.full-card-title.flex.items-center
           div.big-title.q-pr-lg Monitoramentos Anteriores
-          q-btn(color="accent" no-caps).btn.no-shadow Novo Monitoramento
+          q-btn(color="accent" no-caps @click="$router.push('/report')").btn.no-shadow Novo Monitoramento
         div.summary-cards.flex.justify-between
           div(v-for="n in 6").summary-card.flex.q-pa-lg.flex.q-mb-lg.shadow-global
             q-img(src="../assets/wire-rope-basics-Full.jpg" :ratio="1").q-mr-md
