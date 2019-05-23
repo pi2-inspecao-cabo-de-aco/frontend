@@ -1,6 +1,7 @@
 // Configuration for your app
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000/'
 const BACKEND_URL_WS = process.env.BACKEND_URL_WS || 'ws://localhost:4000/'
+const ROBOT_URL = process.env.ROBOT_URL || 'http://localhost:3030'
 
 module.exports = function (ctx) {
   return {
@@ -87,6 +88,9 @@ module.exports = function (ctx) {
       //     .extensions
       //     .prepend('.mjs')
       // },
+      env: {
+        ROBOT_URL: JSON.stringify(ROBOT_URL)
+      },
       extendWebpack (cfg) {
         cfg.module.rules.push({
           test: /\.mjs$/,
