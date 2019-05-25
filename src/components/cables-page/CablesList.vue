@@ -1,13 +1,16 @@
 <template lang="pug">
-  div.full-width.column.flex-1.justify-center
-    div(v-if="hasCables").text-center.q-py-lg.column.items-center
+  div.full-width.column.flex-1.justify-center.items-center
+    div(v-if="hasCables").full-width.text-center.q-py-lg.q-pb-xl.column.items-center
       div.table-box.full-width.column.bg-grey-2.shadow-global
         div.table.head.full-width.text-grey-8
+          div.q-pa-sm
           div.q-pa-sm Nome
           div.q-pa-sm Tamanho (mm)
           div.q-pa-sm Diâmetro (mm)
           div.q-pa-sm Vida útil (dias)
         div(v-for="(cable,index) of cables" :key="index").table.cel.full-width.text-grey-8
+          div.q-pa-sm
+            q-radio(v-model="selected" color="positive" :val="cable.id")
           div.q-pa-sm {{ cable.name }}
           div.q-pa-sm {{ cable.size }}
           div.q-pa-sm {{ cable.diameter }}
@@ -20,9 +23,16 @@
               flat
               color="accent"
             )
-    div(v-else).text-center.q-pa-lg.column.items-center
+    div(v-else).text-center.q-pa-xl.column.items-center
       q-icon(name="mdi-alert-decagram" color="yellow-9" size="50px").q-mb-md
       div.text-white Nenhum cabo foi cadastrado até o momento
+    q-btn(
+      @click="$router.push('/')"
+      color="positive"
+      no-caps
+      :disabled="!cableSelected"
+      :title="cableSelected ? 'Clique para prosseguir' : 'Selecione um cabo para prosseguir'"
+    ).btn.no-shadow Prosseguir
 </template>
 
 <script>
@@ -44,12 +54,16 @@ export default {
   },
   data () {
     return {
-      cables: []
+      cables: [],
+      selected: ''
     }
   },
   computed: {
     hasCables () {
       return (this.cables || []).length > 0
+    },
+    cableSelected () {
+      return this.selected.trim().length > 0
     }
   },
   methods: {
@@ -81,7 +95,7 @@ export default {
 
 .table
   display grid
-  grid-template-columns 2fr 1fr 1fr 1fr 60px
+  grid-template-columns 60px 2fr 1fr 1fr 1fr 60px
   grid-template-rows 1fr
   text-align left
   border-bottom solid 1px $grey-4
@@ -94,4 +108,8 @@ export default {
   font-weight 500
   background $grey-3
   font-size 15px
+
+.btn
+  padding 10px 25px
+  border-radius 20px !important
 </style>
