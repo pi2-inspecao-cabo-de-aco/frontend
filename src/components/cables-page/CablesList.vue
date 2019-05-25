@@ -10,7 +10,13 @@
           div.q-pa-sm Vida útil (dias)
         div(v-for="(cable,index) of cables" :key="index").table.cel.full-width.text-grey-8
           div.q-pa-sm
-            q-radio(v-model="selected" color="positive" :val="cable.id")
+            q-btn(
+              @click="selectCable(cable)"
+              icon="mdi-check-circle"
+              round
+              flat
+              :color="checkSelectedCable(cable) ? 'positive' : 'grey-4'"
+            )
           div.q-pa-sm {{ cable.name }}
           div.q-pa-sm {{ cable.size }}
           div.q-pa-sm {{ cable.diameter }}
@@ -32,12 +38,14 @@
       no-caps
       :disabled="!cableSelected"
       :title="cableSelected ? 'Clique para prosseguir' : 'Selecione um cabo para prosseguir'"
-    ).btn.no-shadow Prosseguir
+    ).btn.no-shadow Continuar
 </template>
 
 <script>
 import CABLES from '../../graphql/queries/cables.gql'
 import DELETE_CABLE from '../../graphql/mutations/delete-cable.gql'
+
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'CablesList',
@@ -54,19 +62,24 @@ export default {
   },
   data () {
     return {
-      cables: [],
-      selected: ''
+      cables: []
     }
   },
   computed: {
+    ...mapGetters('cables', [
+      'currentCable'
+    ]),
     hasCables () {
       return (this.cables || []).length > 0
     },
     cableSelected () {
-      return this.selected.trim().length > 0
+      return this.currentCable
     }
   },
   methods: {
+    ...mapActions('cables', [
+      'setCurrentCable'
+    ]),
     async deleteCable (id) {
       try {
         await this.$apollo.mutate({
@@ -76,11 +89,19 @@ export default {
           },
           refetchQueries: ['cables']
         })
+        this.setCurrentCable(null)
         this.$q.notify({ message: 'Cabo removido com sucesso', color: 'positive', icon: 'mdi-check', timeout: 2000 })
       } catch (err) {
         this.$q.notify({ message: 'Não foi possível remover o cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
         throw err
       }
+    },
+    selectCable (cable) {
+      this.setCurrentCable(cable)
+      // this.$q.notify({ message: `O cabo ${cable.name} foi selecionado!`, color: 'positive', icon: 'mdi-check', timeout: 1000 })
+    },
+    checkSelectedCable (cable) {
+      return (this.currentCable || {}).id === cable.id
     }
   }
 }

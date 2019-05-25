@@ -4,7 +4,7 @@
       img(src="../assets/logo2.png" @click="$router.push('/')").logo.cursor-pointer
       div.flex
         q-btn(
-          @click="$router.push('/cables')"
+          @click="$router.push('/')"
           icon="mdi-ray-start-end"
           color="white"
           text-color="primary"

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-// import example from './module-example'
+import cables from './cables'
 
 Vue.use(Vuex)
 
@@ -13,7 +13,7 @@ Vue.use(Vuex)
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
-      // example
+      cables
     },
 
     // enable strict mode (adds overhead!)
