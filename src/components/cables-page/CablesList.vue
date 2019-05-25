@@ -33,7 +33,7 @@
       q-icon(name="mdi-alert-decagram" color="yellow-9" size="50px").q-mb-md
       div.text-white Nenhum cabo foi cadastrado até o momento
     q-btn(
-      @click="$router.push('/')"
+      @click="$router.push('/overview')"
       color="positive"
       no-caps
       :disabled="!cableSelected"
