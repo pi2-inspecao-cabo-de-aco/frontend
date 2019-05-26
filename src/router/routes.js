@@ -4,14 +4,14 @@ const routes = [
     path: '/',
     component: () => import('layouts/TopBarLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '', component: () => import('pages/CablesPage.vue') }
     ]
   },
   {
-    path: '/cables',
+    path: '/overview',
     component: () => import('layouts/TopBarLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/CablesPage.vue') }
+      { path: '', component: () => import('pages/OverviewPage.vue') }
     ]
   },
   {
