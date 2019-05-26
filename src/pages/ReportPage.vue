@@ -1,5 +1,6 @@
 <template lang="pug">
   q-page.report-page.full-width.q-py-lg.q-mb-xl.flex.items-center
+    error-modal
     div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
       | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
     div.full-width.flex
@@ -57,10 +58,12 @@
 
 <script>
 import { start, pause, direction, reset } from '../api/commands'
+
 export default {
   name: 'ReportPage',
   components: {
-    ImageRenderer: () => import('../components/ImageRender')
+    ImageRenderer: () => import('../components/ImageRender'),
+    ErrorModal: () => import('../components/report-page/ErrorModal')
   },
   data () {
     return {
