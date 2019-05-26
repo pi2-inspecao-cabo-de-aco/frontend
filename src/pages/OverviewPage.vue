@@ -54,7 +54,7 @@ export default {
 @import '~quasar-variables'
 
 .index-container
-  padding-bottom 120px
+  padding-bottom 80px
 
 .card
   border-radius 5px
