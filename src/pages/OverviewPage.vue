@@ -7,51 +7,25 @@
         div.card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 Condições de Uso
           h1(v-if="cable.general_state").text-bold {{ cable.general_state }}
-          div(v-else).text-yellow-9.text-center Informação indisponível
+          div(v-else).text-yellow-9.text-center.q-mt-md.q-pb-sm Informação indisponível
         div.card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 Vida útil
           h1(v-if="cable.lifespan").text-bold
             | {{ cable.lifespan }}
-            span.unity.q-ml-sm dias
-          div(v-else).text-yellow-9.text-center Informação indisponível
+            span.unity.q-ml-sm
+              | dia
+              span(v-if="cable.lifespan > 1") s
+          div(v-else).text-yellow-9.text-center.q-mt-md.q-pb-sm Informação indisponível
         div.card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 Tamanho
           h1(v-if="cable.size").text-bold
             | {{ cable.size }}
             span.unity.q-ml-sm mm
-          div(v-else).text-yellow-9.text-center Informação indisponível
+          div(v-else).text-yellow-9.text-center.q-mt-md.q-pb-sm Informação indisponível
         div.card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 Nível de Alerta
-          div.text-yellow-9.text-center Informação indisponível
-      div.card.column.no-wrap.full-width.q-mt-lg.bg-primary.text-white.shadow-global.q-pa-lg
-        div.full-card-title.flex.items-center
-          div.big-title.q-pr-lg Monitoramentos Anteriores
-          q-btn(
-            @click="$router.push('/report')"
-            color="accent"
-            :disabled="!currentCable"
-            :title="currentCable ? 'Iniciar novo monitoramento' : 'É necessário ter um cabo selecionado para iniciar um monitoramento'"
-            no-caps
-          ).btn.no-shadow Novo Monitoramento
-        div.summary-cards.flex.justify-between
-          div(v-for="n in 6").summary-card.flex.q-pa-lg.flex.q-mb-lg.shadow-global
-            q-img(src="../assets/wire-rope-basics-Full.jpg" :ratio="1").q-mr-md
-            div.summary-infos.column
-              div.flex.items-center.q-mb-sm
-                div.label.text-grey-4 Condição:
-                div.value {{ summary.condition }}
-              div.flex.items-center.q-mb-sm
-                div.label.text-grey-4 Data:
-                div.value {{ summary.date }}
-              div.flex.items-center.q-mb-sm
-                div.label.text-grey-4  Tempo de execução:
-                div.value {{ summary.time }}
-              div.flex.items-center.q-mb-sm
-                div.label.text-grey-4  Vida útil:
-                div.value {{ summary.lifespan }}
-              div.flex.items-center.q-mb-sm
-                div.label.text-grey-4  Nível de Alerta:
-                div.value {{ summary.alertLevel }}
+          div.text-yellow-9.text-center.q-mt-md.q-pb-sm Informação indisponível
+      reports-list
 </template>
 
 <style>
@@ -62,16 +36,8 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'OverviewPage',
-  data () {
-    return {
-      summary: {
-        date: '03/04/2019',
-        time: '7:31',
-        lifespan: 134172,
-        alertLevel: 'Baixo',
-        condition: 'Normal'
-      }
-    }
+  components: {
+    ReportsList: () => import('../components/overview-page/ReportsList')
   },
   computed: {
     ...mapGetters('cables', [
@@ -116,32 +82,9 @@ export default {
 .full-card-title
   margin 0 0 24px 0
 
-.big-title
-  text-align left
-  font-size 24px
-  line-height 24px
-  font-weight 500
-
 .btn
   padding 10px 25px
   border-radius 20px !important
-
-.summary-cards
-  flex-wrap wrap
-
-.summary-card
-  width 48%
-  border-radius 5px
-  background #2e435f
-
-  .q-img
-    max-width 150px
-    border-radius 5px
-
-.label
-  font-weight 500
-  margin-right 5px
-  font-size 16px
 
 .unity
   font-size 18px

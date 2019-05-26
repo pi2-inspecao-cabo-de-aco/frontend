@@ -1,6 +1,6 @@
 <template lang="pug">
   q-page.cable-page.full-width.q-py-lg.q-mb-xl
-    div(:class="notificationClass").page-card.q-pa-sm.text-center.text-white.q-mb-lg
+    div(v-if="!newCable" :class="notificationClass").page-card.q-pa-sm.text-center.text-white.q-mb-lg
       | {{ notificationMessage }}
     div.page-card.q-pa-lg.bg-primary.shadow-global.column
       div.flex.items-center
