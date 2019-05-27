@@ -1,7 +1,7 @@
 <template lang="pug">
-  q-dialog(v-model="visibility")
+  q-dialog(:value="visibility" persistent)
     div.error-modal.card.bg-secondary.q-pa-lg
-      div.big-title.text-white.q-mb-lg Reportar erro
+      div.big-title.text-white.q-mb-lg Reportar erro na posição
       div.errors.full.width.flex.justify-center.q-mb-xl
         div(v-for="(error, index) of errors" :key="index").column.items-center.q-mr-lg
           q-btn(
@@ -14,17 +14,32 @@
           ).no-shadow
           div.text-center.text-white.q-mt-sm {{ error.name }}
       div.full-widht.flex.justify-center
-        q-btn(flat label="Cancelar" no-caps color="white" v-close-popup).btn.q-mr-md.no-shadow
-        q-btn(label="Reportar erro" no-caps color="accent").btn.no-shadow
+        q-btn(
+          @click="changeVisibility(false)"
+          flat label="Cancelar"
+          no-caps
+          color="white"
+        ).btn.q-mr-md.no-shadow
+        q-btn(
+          @click="sendErrorName"
+          label="Reportar erro"
+          no-caps
+          color="accent"
+        ).btn.no-shadow
 </template>
 
 <script>
 export default {
   name: 'ErrorModal',
+  props: {
+    visibility: {
+      type: Boolean,
+      required: true
+    }
+  },
   data () {
     return {
-      visibility: true,
-      selected: null,
+      selected: -1,
       errors: [
         {
           name: 'Oxidação',
@@ -39,6 +54,23 @@ export default {
           icon: 'mdi-image-broken-variant'
         }
       ]
+    }
+  },
+  methods: {
+    changeVisibility (value) {
+      this.$emit('change-visibility', value)
+    },
+    cancel () {
+      this.selected = -1
+      this.changeVisibility(false)
+    },
+    sendErrorName () {
+      if (this.selected > -1) {
+        this.$emit('send-error-name', this.errors[this.selected].name)
+        this.changeVisibility(false)
+      } else {
+        this.$q.notify({ message: 'Nenhum erro foi selecionado para reportar', color: 'yellow-9', icon: 'mdi-alert-circle-outline', timeout: 1000 })
+      }
     }
   }
 }

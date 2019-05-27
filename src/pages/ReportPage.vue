@@ -1,29 +1,41 @@
 <template lang="pug">
   q-page.report-page.full-width.q-py-lg.q-mb-xl.flex.items-center
-    error-modal
+    error-modal(
+      :visibility="errorVisibility"
+      @change-visibility="changeErrorModalVisibility"
+      @send-error-name="setErrorName"
+    )
     div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
       | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
+    div.full-width.q-mb-lg.flex
+      div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
+        div.label.text-grey-4.q-mb-sm Posição
+        div.position.text-center.text-white
+          span 1,5
+          span.q-mx-sm -
+          span 3,0 cm
+      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
+        div.label.text-grey-4.q-mb-sm Reporte do sensor
+        div.value.text-center.text-positive
+          span Normal
+      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
+        div.label.text-grey-4.q-mb-sm Reporte manual
+        div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
+          span {{ manualError }}
+      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md.card-rna
+        div.label.text-grey-4.q-mb-sm Reporte da Rede Neural
+        div.value.text-center.text-yellow-9
+          span -
     div.full-width.flex
       image-renderer
-      div.report-content.flex-1
-        div.q-mb-lg.flex
-          div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
-            div.label.text-grey-4.q-mb-sm Localização
-            div.value.text-center.text-white
-              span 1,5
-              span.q-mx-sm -
-              span 3,0 cm
-          div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
-            div.label.text-grey-4.q-mb-sm Reporte do sensor
-            div.value.text-center.text-positive
-              span Normal
+      div.report-content.flex-1.justify-center.column
         div.flex.justify-center.q-mb-md
           q-btn(
             @click="sendStartOrPauseCommand"
             :color="reporting ? 'grey-5' : 'positive'"
             round
             :icon="reporting ? 'mdi-pause' : 'mdi-play'"
-            size="24px"
+            size="32px"
           ).shadow-global
         div.flex.items-center.justify-center
           q-btn(
@@ -31,20 +43,22 @@
             color="primary"
             round
             icon="mdi-arrow-left-bold"
-            size="24px"
+            size="32px"
           ).shadow-global
           q-btn(
+            title="Reportar Erro"
+            @click="changeErrorModalVisibility(true)"
             color="warning"
             round
             icon="mdi-alert-circle"
-            size="28px"
+            size="38px"
           ).q-mx-md.shadow-global
           q-btn(
             @click="sendDirectionCommand('right')"
             color="primary"
             round
             icon="mdi-arrow-right-bold"
-            size="24px"
+            size="32px"
           ).shadow-global
         div.column.items-center.justify-center.q-mt-md
           q-btn(
@@ -52,7 +66,7 @@
             color="negative"
             round
             icon="mdi-stop"
-            size="24px"
+            size="32px"
           ).shadow-global
 </template>
 
@@ -67,7 +81,14 @@ export default {
   },
   data () {
     return {
-      reporting: false
+      reporting: false,
+      errorVisibility: false,
+      manualErrorName: ''
+    }
+  },
+  computed: {
+    manualError () {
+      return this.manualErrorName ? this.manualErrorName : 'Nenhum'
     }
   },
   methods: {
@@ -101,6 +122,12 @@ export default {
         this.reporting = false
         console.log(err)
       }
+    },
+    changeErrorModalVisibility (value) {
+      this.errorVisibility = value
+    },
+    setErrorName (error) {
+      this.manualErrorName = error
     }
   }
 }
@@ -125,4 +152,11 @@ export default {
 .value
   font-size 38px
   font-weight bold
+
+.position
+  font-size 32px
+  font-weight bold
+
+.card-rna
+  opacity 0.3
 </style>
