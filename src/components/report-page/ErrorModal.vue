@@ -21,7 +21,7 @@
           color="white"
         ).btn.q-mr-md.no-shadow
         q-btn(
-          @click="sendErrorName"
+          @click="reportManualError"
           label="Reportar erro"
           no-caps
           color="accent"
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'ErrorModal',
   props: {
@@ -43,28 +45,36 @@ export default {
       errors: [
         {
           name: 'Oxidação',
-          icon: 'mdi-invert-colors'
+          icon: 'mdi-invert-colors',
+          value: 'oxidacao'
         },
         {
           name: 'Estricção',
-          icon: 'mdi-arrow-expand-all'
+          icon: 'mdi-arrow-expand-all',
+          value: 'estriccao'
         },
         {
           name: 'Ruptura',
-          icon: 'mdi-image-broken-variant'
+          icon: 'mdi-image-broken-variant',
+          value: 'ruptura'
         }
       ]
     }
   },
+  computed: {
+    ...mapGetters('analysis', [
+      'currentAnalysis'
+    ])
+  },
   methods: {
-    changeVisibility (value) {
+    async changeVisibility (value) {
       this.$emit('change-visibility', value)
     },
-    cancel () {
+    async cancel () {
       this.selected = -1
       this.changeVisibility(false)
     },
-    sendErrorName () {
+    async reportManualError () {
       if (this.selected > -1) {
         this.$emit('send-error-name', this.errors[this.selected].name)
         this.changeVisibility(false)

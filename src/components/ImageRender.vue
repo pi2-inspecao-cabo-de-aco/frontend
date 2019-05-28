@@ -3,10 +3,9 @@
 </template>
 
 <script>
-import {
-  QImg
-} from 'quasar'
 import ANALYSIS_WAS_CREATED from '../graphql/subscriptions/analysis.gql'
+import { QImg } from 'quasar'
+import { mapActions } from 'vuex'
 export default {
   name: 'ImageRender',
   components: {
@@ -19,9 +18,15 @@ export default {
         result ({ data }) {
           if (data) {
             this.analysis = data.analysisWasCreated
+            this.setCurrentAnalysis(data.analysisWasCreated)
           }
         }
       }
+    }
+  },
+  data () {
+    return {
+      analysis: {}
     }
   },
   computed: {
@@ -29,13 +34,10 @@ export default {
       return (this.analysis.image_path || '').replace('/server', '')
     }
   },
-  data () {
-    return {
-      analysis: {}
-    }
+  methods: {
+    ...mapActions('analysis', [
+      'setCurrentAnalysis'
+    ])
   }
 }
 </script>
-
-<style lang="stylus" scoped>
-</style>

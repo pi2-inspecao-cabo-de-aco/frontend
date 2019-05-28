@@ -2,7 +2,7 @@
   q-page.report-page.full-width.q-py-lg.q-mb-xl.flex.items-center
     error-modal(
       :visibility="errorVisibility"
-      @change-visibility="changeErrorModalVisibility"
+      async @change-visibility="changeErrorModalVisibility"
       @send-error-name="setErrorName"
     )
     //- div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
@@ -50,7 +50,7 @@
           ).shadow-global
           q-btn(
             title="Reportar Erro"
-            @click="changeErrorModalVisibility(true)"
+            async @click="changeErrorModalVisibility(true)"
             color="warning"
             round
             icon="mdi-alert-circle"
@@ -133,7 +133,14 @@ export default {
         console.log(err)
       }
     },
-    changeErrorModalVisibility (value) {
+    async changeErrorModalVisibility (value) {
+      if (value) {
+        this.reporting = false
+        await pause()
+      } else {
+        this.reporting = true
+        await start()
+      }
       this.errorVisibility = value
     },
     setErrorName (error) {
