@@ -9,7 +9,7 @@
         :title="currentCable ? 'Iniciar novo monitoramento' : 'É necessário ter um cabo selecionado para iniciar um monitoramento'"
         no-caps
       ).btn.no-shadow Novo Monitoramento
-    div(v-if="reports.length").report-cards.flex.justify-between
+    div(v-if="(reports || []).length").report-cards.flex.justify-between
       report-card(v-for="report of reports" :key="report.id" :report="report")
     div(v-else).text-center.q-pa-xl.column.items-center
       q-icon(name="mdi-alert-decagram" color="yellow-9" size="50px").q-mb-md
