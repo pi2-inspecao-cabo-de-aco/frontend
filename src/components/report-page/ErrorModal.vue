@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import SET_MANUAL_STATE from '../../graphql/mutations/set-analysis-manual-state.gql'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -74,12 +75,30 @@ export default {
       this.selected = -1
       this.changeVisibility(false)
     },
+    async setManualState (id, state) {
+      try {
+        await this.$apollo.mutate({
+          mutation: SET_MANUAL_STATE,
+          variables: {
+            id,
+            state
+          }
+        })
+      } catch (err) {
+        throw err
+      }
+    },
     async reportManualError () {
       if (this.selected > -1) {
         this.$emit('send-error-name', this.errors[this.selected].name)
+        let { id } = this.currentAnalysis
+        let manualState = this.errors[this.selected].value
+        this.setManualState(id, manualState)
         this.changeVisibility(false)
+        this.$q.notify({ message: `Erro ${this.errors[this.selected].name} reportado para esta posição`, color: 'positive', icon: 'mdi-check', timeout: 1000 })
+        this.selected = -1
       } else {
-        this.$q.notify({ message: 'Nenhum erro foi selecionado para reportar', color: 'yellow-9', icon: 'mdi-alert-circle-outline', timeout: 1000 })
+        this.$q.notify({ message: 'Não foi possível reportar o erro', color: 'yellow-9', icon: 'mdi-alert-circle-outline', timeout: 1000 })
       }
     }
   }

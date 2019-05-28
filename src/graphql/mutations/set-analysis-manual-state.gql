@@ -1,0 +1,6 @@
+mutation setAnalysisManualState ($id: ID!, $state: String) {
+  setAnalysisManualState (id: $id, state: $state) {
+    id
+    manual_state
+  }
+}
