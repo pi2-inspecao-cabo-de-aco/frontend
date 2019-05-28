@@ -5,8 +5,11 @@
       @change-visibility="changeErrorModalVisibility"
       @send-error-name="setErrorName"
     )
-    div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
-      | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
+    //- div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
+    //-   | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
+    div(ref="robot").full-width.flex.q-mb-lg
+      div.full-width.cable.bg-grey-7.q-my-lg
+      q-img(src="../assets/robo2.png" :style="{ marginLeft: robotPosition }").robot
     div.full-width.q-mb-lg.flex
       div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Posição
@@ -83,12 +86,19 @@ export default {
     return {
       reporting: false,
       errorVisibility: false,
-      manualErrorName: ''
+      manualErrorName: '',
+      currentPosition: 0,
+      robotDivSize: 0
     }
   },
   computed: {
     manualError () {
       return this.manualErrorName ? this.manualErrorName : 'Nenhum'
+    },
+    robotPosition () {
+      let width = this.robotDivSize - 150
+      let position = (this.currentPosition / 100) * width
+      return `${position}px`
     }
   },
   methods: {
@@ -129,6 +139,16 @@ export default {
     setErrorName (error) {
       this.manualErrorName = error
     }
+  },
+  mounted () {
+    this.robotDivSize = this.$refs.robot.clientWidth
+    let interval = setInterval(() => {
+      if (this.currentPosition < 100) {
+        this.currentPosition += 1
+      } else {
+        clearInterval(interval)
+      }
+    }, 1000)
   }
 }
 </script>
@@ -159,4 +179,13 @@ export default {
 
 .card-rna
   opacity 0.3
+
+.robot
+  max-width 150px
+  position absolute
+  margin-top 0.5px
+  transition all 1.2s ease
+
+.cable
+  height 8px
 </style>
