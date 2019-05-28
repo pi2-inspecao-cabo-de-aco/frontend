@@ -26,6 +26,7 @@
           ).shadow-global
         div.flex.items-center.justify-center
           q-btn(
+            @click="sendDirectionCommand('left')"
             color="primary"
             round
             icon="mdi-arrow-left-bold"
@@ -38,6 +39,7 @@
             size="28px"
           ).q-mx-md.shadow-global
           q-btn(
+            @click="sendDirectionCommand('right')"
             color="primary"
             round
             icon="mdi-arrow-right-bold"
@@ -45,6 +47,7 @@
           ).shadow-global
         div.column.items-center.justify-center.q-mt-md
           q-btn(
+            @click="sendResetCommand"
             color="negative"
             round
             icon="mdi-stop"
@@ -53,7 +56,7 @@
 </template>
 
 <script>
-import { start, pause } from '../api/commands'
+import { start, pause, direction, reset } from '../api/commands'
 export default {
   name: 'ReportPage',
   components: {
@@ -74,6 +77,23 @@ export default {
           this.reporting = !this.reporting
           await pause()
         }
+      } catch (err) {
+        this.reporting = false
+        console.log(err)
+      }
+    },
+    async sendDirectionCommand (orientation) {
+      try {
+        await direction(orientation)
+      } catch (err) {
+        this.reporting = false
+        console.log(err)
+      }
+    },
+    async sendResetCommand () {
+      try {
+        await reset()
+        this.reporting = false
       } catch (err) {
         this.reporting = false
         console.log(err)
