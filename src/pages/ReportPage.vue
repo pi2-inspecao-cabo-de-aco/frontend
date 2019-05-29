@@ -14,9 +14,9 @@
       div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Posição
         div.position.text-center.text-white
-          span 1,5
+          span {{ startPosition }}
           span.q-mx-sm -
-          span 3,0 cm
+          span {{ endPosition }}cm
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
         div.value.text-center.text-positive
@@ -75,6 +75,7 @@
 
 <script>
 import { start, pause, direction, reset } from '../api/commands'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ReportPage',
@@ -92,12 +93,25 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('analysis', [
+      'position',
+      'cable'
+    ]),
+    startPosition () {
+      return (this.position.start || 0) / 10
+    },
+    endPosition () {
+      return (this.position.end || 0) / 10
+    },
+    cableSize () {
+      return (this.cable.size || 0) / 10
+    },
     manualError () {
       return this.manualErrorName ? this.manualErrorName : 'Nenhum'
     },
     robotPosition () {
       let width = this.robotDivSize - 150
-      let position = (this.currentPosition / 100) * width
+      let position = ((this.startPosition + 2.5) / this.cableSize) * width
       return `${position}px`
     }
   },
@@ -149,13 +163,6 @@ export default {
   },
   mounted () {
     this.robotDivSize = this.$refs.robot.clientWidth
-    let interval = setInterval(() => {
-      if (this.currentPosition < 100) {
-        this.currentPosition += 1
-      } else {
-        clearInterval(interval)
-      }
-    }, 1000)
   }
 }
 </script>
