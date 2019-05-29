@@ -2,5 +2,14 @@ subscription analysisWasCreated {
   analysisWasCreated {
     id
     image_path
+    position_start
+    position_end
+    report_id
+    cable_id
+    cable {
+      id
+      size
+      diameter
+    }
   }
 }
