@@ -5,33 +5,38 @@
       async @change-visibility="changeErrorModalVisibility"
       @send-error-name="setErrorName"
     )
-    //- div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
-    //-   | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
     div(ref="robot").full-width.flex.q-mb-lg
       div.full-width.cable.bg-grey-7.q-my-lg
-      q-img(src="../assets/robo2.png" :style="{ marginLeft: robotPosition }").robot
+      q-img(src="../assets/robo2.png" :style="{ marginLeft: robotPosition }" spinner-color="grey-1").robot
     div.full-width.q-mb-lg.flex
       div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Posição
-        div.position.text-center.text-white
+        div(v-if="reporting").position.text-center.text-white
           span {{ startPosition }}
           span.q-mx-sm -
           span {{ endPosition }}cm
+        div(v-else).position.text-center.text-white -
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
-        div.value.text-center.text-positive
-          span Normal
+        div.value.text-center.text-white
+          span {{ reporting ? 'Normal' : '-' }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
-          span {{ manualError }}
+          span {{ reporting ? manualError : '-' }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md.card-rna
         div.label.text-grey-4.q-mb-sm Reporte da Rede Neural
-        div.value.text-center.text-yellow-9
+        div.value.text-center.text-white
           span -
     div.full-width.flex
       image-renderer
-      div.report-content.flex-1.justify-center.column
+      div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
+        q-btn(
+          color="accent"
+          no-caps
+          size="20px"
+        ).no-shadow.btn.animate-pop Iniciar Monitoramento
+      div(v-else).report-content.flex-1.justify-center.column
         div.flex.justify-center.q-mb-md
           q-btn(
             @click="sendStartOrPauseCommand"
@@ -85,6 +90,7 @@ export default {
   },
   data () {
     return {
+      reportCreated: false,
       reporting: false,
       errorVisibility: false,
       manualErrorName: '',
@@ -202,4 +208,8 @@ export default {
 
 .cable
   height 8px
+
+.btn
+  padding 15px 30px
+  border-radius 30px !important
 </style>
