@@ -32,11 +32,12 @@
       image-renderer
       div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
         q-btn(
+          @click="createReport"
           color="accent"
           no-caps
           size="20px"
         ).no-shadow.btn.animate-pop Iniciar Monitoramento
-      div(v-else).report-content.flex-1.justify-center.column
+      div(v-else).report-content.flex-1.justify-center.column.animate-pop
         div.flex.justify-center.q-mb-md
           q-btn(
             @click="sendStartOrPauseCommand"
@@ -81,6 +82,7 @@
 <script>
 import { start, pause, direction, reset } from '../api/commands'
 import { mapGetters } from 'vuex'
+import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 
 export default {
   name: 'ReportPage',
@@ -99,6 +101,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('cables', [
+      'currentCable'
+    ]),
     ...mapGetters('analysis', [
       'position',
       'cable'
@@ -165,6 +170,27 @@ export default {
     },
     setErrorName (error) {
       this.manualErrorName = error
+    },
+    async createReport () {
+      if (this.currentCable) {
+        try {
+          await this.$apollo.mutate({
+            mutation: CREATE_REPORT,
+            variables: {
+              cableId: this.currentCable.id
+            }
+          })
+          this.$q.notify({ message: 'Monitoramento iniciado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
+          this.reportCreated = true
+          this.reporting = true
+          await start()
+        } catch (err) {
+          this.$q.notify({ message: 'Não foi possível cadastrar o cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
+          throw err
+        }
+      } else {
+        this.$q.notify({ message: 'É necessário ter um cabo selecionado para iniciar o monitoramento', color: 'yellow-9', icon: 'mdi-alert-circle-outline' })
+      }
     }
   },
   mounted () {
