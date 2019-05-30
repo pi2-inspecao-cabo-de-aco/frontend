@@ -11,19 +11,19 @@
     div.full-width.q-mb-lg.flex
       div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Posição
-        div(v-if="reporting").position.text-center.text-white
+        div(v-if="!reporting && !reportCreated").position.text-center.text-white -
+        div(v-else).position.text-center.text-white
           span {{ startPosition }}
           span.q-mx-sm -
           span {{ endPosition }}cm
-        div(v-else).position.text-center.text-white -
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
         div.value.text-center.text-white
-          span {{ reporting ? 'Normal' : '-' }}
+          span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
-          span {{ reporting ? manualError : '-' }}
+          span {{ (!reporting && !reportCreated) ? '-' : manualError }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md.card-rna
         div.label.text-grey-4.q-mb-sm Reporte da Rede Neural
         div.value.text-center.text-white
@@ -153,6 +153,8 @@ export default {
       try {
         await reset()
         this.reporting = false
+        this.reportCreated = false
+        this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
       } catch (err) {
         this.reporting = false
         console.log(err)
@@ -195,6 +197,11 @@ export default {
   },
   mounted () {
     this.robotDivSize = this.$refs.robot.clientWidth
+  },
+  watch: {
+    position: function (val) {
+      this.manualErrorName = ''
+    }
   }
 }
 </script>
