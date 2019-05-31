@@ -6,7 +6,7 @@
       div.cards.flex.full-width.global-shadow
         div.card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 Condições de Uso
-          h1(v-if="cable.general_state").text-bold {{ cable.general_state }}
+          h1(v-if="cable.general_state" :class="generalStateColor").text-bold {{ cable.general_state }}
           div(v-else).text-yellow-9.text-center.q-mt-md.q-pb-sm
             | Informação indisponível
             br
@@ -31,7 +31,7 @@
             | Informação indisponível
             br
             | (Faça um monitoramento)
-          h1(v-else).text-bold
+          h1(v-else :class="generalStateColor").text-bold
             | {{ alertLevel[cable.general_state] }}
       reports-list
 </template>
@@ -62,6 +62,13 @@ export default {
     ]),
     cable () {
       return (this.currentCable || { general_state: '', lifespan: null, size: null, diameter: null })
+    },
+    generalStateColor () {
+      return {
+        'text-positive': this.cable.general_state === 'Normal',
+        'text-yellow-9': this.cable.general_state === 'Danificado',
+        'text-red-6': this.cable.general_state === 'Descartável'
+      }
     }
   }
 }
