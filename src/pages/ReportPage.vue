@@ -81,7 +81,7 @@
 
 <script>
 import { start, pause, direction, reset } from '../api/commands'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
@@ -131,6 +131,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions('cables', [
+      'setCurrentCable'
+    ]
+    ),
     async sendStartOrPauseCommand () {
       try {
         if (!this.reporting) {
@@ -204,13 +208,14 @@ export default {
     },
     async updateCable () {
       try {
-        await this.$apollo.mutate({
+        let { data } = await this.$apollo.mutate({
           mutation: UPDATE_CABLE,
           variables: {
             id: this.currentCable.id,
             generalState: 'Normal'
           }
         })
+        this.setCurrentCable(data.updateCable)
       } catch (err) {
         this.$q.notify({ message: 'Não foi possível atualizar as informações cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
         throw err
