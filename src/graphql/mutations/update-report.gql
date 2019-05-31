@@ -1,0 +1,5 @@
+mutation updateReport ($id: ID!, $alertLevel: String) {
+  updateReport (id: $id, alertLevel: $alertLevel) {
+    id
+  }
+}

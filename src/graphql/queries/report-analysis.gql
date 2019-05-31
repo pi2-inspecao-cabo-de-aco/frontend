@@ -1,0 +1,6 @@
+query reportAnalysis ($reportId: ID!) {
+  reportAnalysis (reportId: $reportId) {
+    id
+    image_path
+  }
+}
