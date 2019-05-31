@@ -82,7 +82,9 @@
 <script>
 import { start, pause, direction, reset } from '../api/commands'
 import { mapGetters } from 'vuex'
+
 import CREATE_REPORT from '../graphql/mutations/create-report.gql'
+import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
 
 export default {
   name: 'ReportPage',
@@ -154,6 +156,7 @@ export default {
         await reset()
         this.reporting = false
         this.reportCreated = false
+        this.updateCable()
         this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
       } catch (err) {
         this.reporting = false
@@ -187,11 +190,25 @@ export default {
           this.reporting = true
           await start()
         } catch (err) {
-          this.$q.notify({ message: 'Não foi possível cadastrar o cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
+          this.$q.notify({ message: 'Não foi possível iniciar o monitoramento', color: 'negative', icon: 'mdi-alert-circle-outline' })
           throw err
         }
       } else {
         this.$q.notify({ message: 'É necessário ter um cabo selecionado para iniciar o monitoramento', color: 'yellow-9', icon: 'mdi-alert-circle-outline' })
+      }
+    },
+    async updateCable () {
+      try {
+        await this.$apollo.mutate({
+          mutation: UPDATE_CABLE,
+          variables: {
+            id: this.currentCable.id,
+            generalState: 'Normal'
+          }
+        })
+      } catch (err) {
+        this.$q.notify({ message: 'Não foi possível atualizar as informações cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
+        throw err
       }
     }
   },
