@@ -1,0 +1,10 @@
+mutation updateCable ($id: ID!, $lifespan: Int, $generalState: String) {
+  updateCable (id: $id, lifespan: $lifespan, generalState: $generalState) {
+    id
+    name
+    general_state
+    lifespan
+    size
+    diameter
+  }
+}

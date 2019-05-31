@@ -98,7 +98,6 @@ export default {
     },
     selectCable (cable) {
       this.setCurrentCable(cable)
-      // this.$q.notify({ message: `O cabo ${cable.name} foi selecionado!`, color: 'positive', icon: 'mdi-check', timeout: 1000 })
     },
     checkSelectedCable (cable) {
       return (this.currentCable || {}).id === cable.id

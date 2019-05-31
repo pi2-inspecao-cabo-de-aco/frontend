@@ -1,5 +1,6 @@
 query reports ($cableId: ID!) {
   reports (cableId: $cableId) {
+    id
     start
     end
     alert_level
