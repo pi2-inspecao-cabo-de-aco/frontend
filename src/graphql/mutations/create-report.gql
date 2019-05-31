@@ -1,0 +1,3 @@
+mutation createReport ($cableId: ID!) {
+  createReport (cableId: $cableId)
+}

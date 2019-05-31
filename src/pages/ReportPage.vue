@@ -5,33 +5,39 @@
       async @change-visibility="changeErrorModalVisibility"
       @send-error-name="setErrorName"
     )
-    //- div(:class="reporting ? 'bg-positive' : 'bg-grey-5'").card.full-width.q-pa-sm.text-center.text-white.q-mb-lg
-    //-   | {{ reporting ? 'Monitoraramento em andamento' : 'Monitoramento em pausa' }}
     div(ref="robot").full-width.flex.q-mb-lg
       div.full-width.cable.bg-grey-7.q-my-lg
-      q-img(src="../assets/robo2.png" :style="{ marginLeft: robotPosition }").robot
+      q-img(src="../assets/robo2.png" :style="{ marginLeft: robotPosition }" spinner-color="grey-1").robot
     div.full-width.q-mb-lg.flex
       div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Posição
-        div.position.text-center.text-white
+        div(v-if="!reporting && !reportCreated").position.text-center.text-white -
+        div(v-else).position.text-center.text-white
           span {{ startPosition }}
           span.q-mx-sm -
           span {{ endPosition }}cm
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
-        div.value.text-center.text-positive
-          span Normal
+        div.value.text-center.text-white
+          span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
-          span {{ manualError }}
+          span {{ (!reporting && !reportCreated) ? '-' : manualError }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md.card-rna
         div.label.text-grey-4.q-mb-sm Reporte da Rede Neural
-        div.value.text-center.text-yellow-9
+        div.value.text-center.text-white
           span -
     div.full-width.flex
       image-renderer
-      div.report-content.flex-1.justify-center.column
+      div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
+        q-btn(
+          @click="createReport"
+          color="accent"
+          no-caps
+          size="20px"
+        ).no-shadow.btn.animate-pop Iniciar Monitoramento
+      div(v-else).report-content.flex-1.justify-center.column.animate-pop
         div.flex.justify-center.q-mb-md
           q-btn(
             @click="sendStartOrPauseCommand"
@@ -76,6 +82,7 @@
 <script>
 import { start, pause, direction, reset } from '../api/commands'
 import { mapGetters } from 'vuex'
+import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 
 export default {
   name: 'ReportPage',
@@ -85,6 +92,7 @@ export default {
   },
   data () {
     return {
+      reportCreated: false,
       reporting: false,
       errorVisibility: false,
       manualErrorName: '',
@@ -93,6 +101,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('cables', [
+      'currentCable'
+    ]),
     ...mapGetters('analysis', [
       'position',
       'cable'
@@ -142,6 +153,8 @@ export default {
       try {
         await reset()
         this.reporting = false
+        this.reportCreated = false
+        this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
       } catch (err) {
         this.reporting = false
         console.log(err)
@@ -159,10 +172,36 @@ export default {
     },
     setErrorName (error) {
       this.manualErrorName = error
+    },
+    async createReport () {
+      if (this.currentCable) {
+        try {
+          await this.$apollo.mutate({
+            mutation: CREATE_REPORT,
+            variables: {
+              cableId: this.currentCable.id
+            }
+          })
+          this.$q.notify({ message: 'Monitoramento iniciado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
+          this.reportCreated = true
+          this.reporting = true
+          await start()
+        } catch (err) {
+          this.$q.notify({ message: 'Não foi possível cadastrar o cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
+          throw err
+        }
+      } else {
+        this.$q.notify({ message: 'É necessário ter um cabo selecionado para iniciar o monitoramento', color: 'yellow-9', icon: 'mdi-alert-circle-outline' })
+      }
     }
   },
   mounted () {
     this.robotDivSize = this.$refs.robot.clientWidth
+  },
+  watch: {
+    position: function (val) {
+      this.manualErrorName = ''
+    }
   }
 }
 </script>
@@ -202,4 +241,8 @@ export default {
 
 .cable
   height 8px
+
+.btn
+  padding 15px 30px
+  border-radius 30px !important
 </style>
