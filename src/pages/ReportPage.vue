@@ -68,6 +68,7 @@
             round
             icon="mdi-arrow-right-bold"
             size="32px"
+            :disabled="isEndCable"
           ).shadow-global
         div.column.items-center.justify-center.q-mt-md
           q-btn(
@@ -86,12 +87,32 @@ import { mapGetters, mapActions } from 'vuex'
 import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
 import UPDATE_REPORT from '../graphql/mutations/update-report.gql'
+import END_CABLE_SUBSCRIPTION from '../graphql/subscriptions/end-cable.gql'
 
 export default {
   name: 'ReportPage',
   components: {
     ImageRenderer: () => import('../components/ImageRender'),
     ErrorModal: () => import('../components/report-page/ErrorModal')
+  },
+  apollo: {
+    $subscribe: {
+      endCablePosition: {
+        query: END_CABLE_SUBSCRIPTION,
+        result ({ data }) {
+          console.log(data)
+          if (data) {
+            this.isEndCable = true
+            this.endCablePosition = data.endCable
+            this.$q.notify({
+              message: 'Sensor de fim de curso identificou um fim.',
+              color: 'warning',
+              icon: 'mdi-alert-circle-outline'
+            })
+          }
+        }
+      }
+    }
   },
   data () {
     return {
@@ -101,7 +122,9 @@ export default {
       manualErrorName: '',
       currentPosition: 0,
       robotDivSize: 0,
-      reportId: ''
+      reportId: '',
+      isEndCable: false,
+      endCablePosition: +Infinity
     }
   },
   computed: {
