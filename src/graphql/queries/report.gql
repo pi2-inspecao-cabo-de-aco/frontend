@@ -1,0 +1,8 @@
+query report ($reportId: ID!) {
+  reports (reportId: $reportId) {
+    id
+    start
+    end
+    alert_level
+  }
+}

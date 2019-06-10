@@ -1,3 +1,3 @@
 export function setCurrentReportId ({ commit }, id) {
-  commit('setCurrentCable', id)
+  commit('setCurrentReportId', id)
 }

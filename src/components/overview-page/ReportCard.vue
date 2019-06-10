@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.report-card.flex.q-pa-lg.flex.q-mb-lg.shadow-global
+  div(@click="showReport()").report-card.flex.q-pa-lg.flex.q-mb-lg.shadow-global
     q-img(:src="randomImg" :ratio="1")
     div.report-infos.column.q-ml-md.column.justify-around
       div.attribute.flex.items-center.q-mb-sm
@@ -18,7 +18,7 @@
 
 <script>
 import { DateTime } from 'luxon'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import REPORT_ANALYSIS from '../../graphql/queries/report-analysis.gql'
 
@@ -70,10 +70,18 @@ export default {
     }
   },
   methods: {
+    ...mapActions('reports', [
+      'setCurrentReportId'
+    ]),
     formatDateTime (datetime) {
       let millis = new Date(datetime).valueOf()
       let d = DateTime.fromMillis(millis)
       return d.toFormat('dd/MM/yyyy - HH:mm:ss')
+    },
+    showReport () {
+      console.log(this.$vnode.key)
+      this.setCurrentReportId(this.$vnode.key)
+      this.$router.push('/report/show')
     }
   }
 }
