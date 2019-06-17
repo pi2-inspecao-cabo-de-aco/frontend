@@ -16,7 +16,7 @@ export default {
       return {
         query: REPORT,
         variables: {
-          reportId: this.currentReportId
+          id: this.currentReportId
         },
         fetchPolicy: 'network-only',
         update (data) {
@@ -27,7 +27,7 @@ export default {
   },
   data () {
     return {
-      report: []
+      report: Object
     }
   },
   computed: {

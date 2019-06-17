@@ -2,20 +2,63 @@
   div.q-pa-lg
     div.full-width.column.flex-1.justify-center.items-center
       div.report-detail.col-auto
-        q-card
-          q-card-section
-            div.text-h6 Informações
-          div.attribute.flex
-            div.label Início:
-            div.value {{ '10/10/2018' }}
-          q-separator
-          div.attribute.flex
-            div.label Fim:
-            div.value {{ '10/10/2018' }}
-          q-separator
-          div.attribute.flex
-            div.label Nível de Alerta:
-            div.value {{ 'High' }}
+        div.text-h6 Informações do cabo
+        div.row
+          div.col
+            q-card
+              div.attribute.flex
+                div.label Pontos de ruptura:
+                div.value {{ '2' }}
+              q-separator
+              div.attribute.flex
+                div.label Pontos de oxidação:
+                div.value {{ '3' }}
+              q-separator
+              div.attribute.flex
+                div.label Status geral:
+                div.value {{ 'Cabo está em bom estado' }}
+          div.col
+            q-card
+              div.attribute.flex
+                div.label Tamanho do cabo:
+                div.value {{ '230 cm' }}
+              q-separator
+              div.attribute.flex
+                div.label Info:
+                div.value {{ 'info' }}
+              q-separator
+              div.attribute.flex
+                div.label Info:
+                div.value {{ 'info' }}
+      div.report-detail.col-auto
+        div.text-h6 Informações do Monitoramento
+        div.row
+          div.col
+            q-card
+              div.attribute.flex
+                div.label Pontos de ruptura:
+                div.value {{ '2' }}
+              q-separator
+              div.attribute.flex
+                div.label Pontos de oxidação:
+                div.value {{ '3' }}
+              q-separator
+              div.attribute.flex
+                div.label Status geral:
+                div.value {{ 'Cabo está em bom estado' }}
+          div.col
+            q-card
+              div.attribute.flex
+                div.label Tamanho do cabo:
+                div.value {{ '230 cm' }}
+              q-separator
+              div.attribute.flex
+                div.label Info:
+                div.value {{ 'info' }}
+              q-separator
+              div.attribute.flex
+                div.label Info:
+                div.value {{ 'info' }}
 
 </template>
 
@@ -24,11 +67,7 @@ export default {
   name: 'ReportDetail',
   props: {
     report: {
-      type: {
-        start: '09/06/2019',
-        end: '09/06/2019',
-        alert_level: 'High'
-      }
+      type: Object
     }
   }
 }
@@ -36,7 +75,7 @@ export default {
 
 <style lang='stylus' scoped>
 .report-detail
-  width 80%
+  width 90%
   padding 15px
   background #ffffff
   .attribute
@@ -46,4 +85,6 @@ export default {
     .label
       font-size 100%
       margin-right 10px
+  .col
+    margin: 5px;
 </style>

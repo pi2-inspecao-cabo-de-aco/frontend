@@ -92,6 +92,7 @@ export default {
   width 48%
   border-radius 5px
   background #2e435f
+  cursor pointer
 
   .q-img
     max-width 150px

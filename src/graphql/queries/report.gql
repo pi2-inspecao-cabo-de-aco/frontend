@@ -1,5 +1,5 @@
-query report ($reportId: ID!) {
-  reports (reportId: $reportId) {
+query report ($id: ID!) {
+  report (id: $id) {
     id
     start
     end
