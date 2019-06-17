@@ -8,7 +8,7 @@
             q-card
               div.attribute.flex
                 div.label Pontos de ruptura:
-                div.value {{ '2' }}
+                div.value {{ report }}
               q-separator
               div.attribute.flex
                 div.label Pontos de oxidação:
@@ -25,7 +25,7 @@
               q-separator
               div.attribute.flex
                 div.label Info:
-                div.value {{ 'info' }}
+                div.value {{ 'iobjectnfo' }}
               q-separator
               div.attribute.flex
                 div.label Info:
@@ -36,16 +36,16 @@
           div.col
             q-card
               div.attribute.flex
-                div.label Pontos de ruptura:
-                div.value {{ '2' }}
+                div.label Reportes Manuais:
+                div.value {{ '4' }}
               q-separator
               div.attribute.flex
-                div.label Pontos de oxidação:
-                div.value {{ '3' }}
+                div.label Reportes automáticos:
+                div.value {{ '7' }}
               q-separator
               div.attribute.flex
-                div.label Status geral:
-                div.value {{ 'Cabo está em bom estado' }}
+                div.label Tempo total:
+                div.value {{ '32' + ' min' }}
           div.col
             q-card
               div.attribute.flex
@@ -66,9 +66,7 @@
 export default {
   name: 'ReportDetail',
   props: {
-    report: {
-      type: Object
-    }
+    report: Object
   }
 }
 </script>
