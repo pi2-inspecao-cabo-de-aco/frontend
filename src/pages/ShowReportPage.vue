@@ -20,9 +20,8 @@ export default {
         },
         fetchPolicy: 'network-only',
         update (data) {
-          // console.log(data.report)
+          console.log(data.report)
           return data.report
-          // return
         }
       }
     }

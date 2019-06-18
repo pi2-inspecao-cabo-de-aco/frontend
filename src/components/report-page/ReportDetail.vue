@@ -59,6 +59,32 @@
               div.attribute.flex
                 div.label Info:
                 div.value {{ 'info' }}
+      div.report-detail.col-auto
+        div.text-h6 Análises
+        div.row.justify-center
+          div.col-md-4
+            q-input.outlined(label='Localização no cabo' color='#1f2f46' v-model="location")
+            q-btn(
+              @click="searchAnalysis"
+              color="accent"
+              no-caps
+            ).btn Pesquisar
+        div.row
+          div.col
+            div.text-bold Análise {{ location }}
+              q-icon(color="red" name="place" style="font-size: 2em;")
+        div.row
+          div.col
+            q-card
+              div.attribute.flex
+                div.label Estado do cabo:
+                div.value {{ 'Não pode ser usado' }}
+              q-separator
+              div.attribute.flex
+                div.label Problemas:
+                div.value {{ 'Ruptura' }}
+          div.col
+            q-img(:src="'https://cdn.quasar.dev/img/parallax2.jpg'" :ratio="1")
 
 </template>
 
@@ -67,6 +93,16 @@ export default {
   name: 'ReportDetail',
   props: {
     report: Object
+  },
+  data () {
+    return {
+      location: null
+    }
+  },
+  methods: {
+    async searchAnalysis() {
+
+    }
   }
 }
 </script>
@@ -85,4 +121,6 @@ export default {
       margin-right 10px
   .col
     margin: 5px;
+    .q-icon
+      margin-left: 10px
 </style>
