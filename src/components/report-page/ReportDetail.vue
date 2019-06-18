@@ -64,11 +64,13 @@
         div.row.justify-center
           div.col-md-4
             q-input.outlined(label='Localização no cabo' color='#1f2f46' v-model="location")
-            q-btn(
-              @click="searchAnalysis"
-              color="accent"
-              no-caps
-            ).btn Pesquisar
+              q-btn(
+                @click="searchAnalysis"
+                color="accent"
+                no-caps
+                number
+                icon='search'
+              )
         div.row
           div.col
             div.text-bold Análise {{ location }}
@@ -89,6 +91,8 @@
 </template>
 
 <script>
+import REPORT_ANALYSIS from '../../graphql/queries/report-analysis.gql'
+
 export default {
   name: 'ReportDetail',
   props: {
@@ -96,12 +100,23 @@ export default {
   },
   data () {
     return {
-      location: null
+      location: null,
+      analysis: Object
     }
   },
   methods: {
-    async searchAnalysis() {
-
+    async searchAnalysis () {
+      try {
+        console.log(this.report)
+        await this.$apollo.queries.reportAnalysis({
+          variables: {
+            reportId: this.report.id
+          }
+        })
+      } catch (err) {
+        this.$q.notify({ message: 'Não existe nenhuma análise nessa posição', color: 'negative', icon: 'mdi-alert-circle-outline' })
+        throw err
+      }
     }
   }
 }
