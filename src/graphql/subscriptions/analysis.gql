@@ -4,6 +4,7 @@ subscription analysisWasCreated {
     image_path
     position_start
     position_end
+    state
     report_id
     cable_id
     cable {
