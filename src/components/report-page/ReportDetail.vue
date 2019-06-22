@@ -80,7 +80,7 @@
             q-card
               div.attribute.flex
                 div.label Estado do cabo:
-                div.value {{ 'Não pode ser usado' }}
+                div.value {{ analysis }}
               q-separator
               div.attribute.flex
                 div.label Problemas:
@@ -91,28 +91,41 @@
 </template>
 
 <script>
-import REPORT_ANALYSIS from '../../graphql/queries/report-analysis.gql'
+import ANALYSIS from '../../graphql/queries/analysis.gql'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ReportDetail',
   props: {
     report: Object
   },
+  apollo: {
+    analysis () {
+      return {
+        query: ANALYSIS,
+        skip: true,
+        fetchPolicy: 'network-only',
+        update (data) {
+          console.log(data)
+          return data.analysis
+        }
+      }
+    }
+  },
   data () {
     return {
       location: null,
-      analysis: Object
+      analysis: {}
     }
   },
   methods: {
     async searchAnalysis () {
       try {
         console.log(this.report)
-        await this.$apollo.queries.reportAnalysis({
-          variables: {
-            reportId: this.report.id
-          }
+        this.$apollo.queries.analysis.setVariables({
+          id: 'e12cd18c-2400-4dec-8f96-bc0c9f720b7c'
         })
+        this.$apollo.queries.analysis.skip = false
       } catch (err) {
         this.$q.notify({ message: 'Não existe nenhuma análise nessa posição', color: 'negative', icon: 'mdi-alert-circle-outline' })
         throw err

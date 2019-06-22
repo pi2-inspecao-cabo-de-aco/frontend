@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import REPORT from '../graphql/queries/report.gql'
+import REPORT_COMPLETE from '../graphql/queries/report-complete.gql'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -14,21 +14,21 @@ export default {
   apollo: {
     report () {
       return {
-        query: REPORT,
+        query: REPORT_COMPLETE,
         variables: {
           id: this.currentReportId
         },
         fetchPolicy: 'network-only',
         update (data) {
-          console.log(data.report)
-          return data.report
+          console.log(data.reportComplete)
+          return data.reportComplete
         }
       }
     }
   },
   data () {
     return {
-      report: Object
+      report: {}
     }
   },
   computed: {
