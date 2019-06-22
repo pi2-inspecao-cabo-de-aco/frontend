@@ -64,15 +64,8 @@
                     :options="selectOptions"
                     option-value="id"
                     option-label="position_start"
-                    map-options)
-            q-btn(
-              @click="searchAnalysis"
-              color="accent"
-              no-caps
-              number
-              icon='search'
-            )
-
+                    map-options
+                    @input="searchAnalysis")
         div.row
           div.col
             div.text-bold Análise: {{ positions }}
