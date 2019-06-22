@@ -63,14 +63,22 @@
         div.text-h6 Análises
         div.row.justify-center
           div.col-md-4
-            q-input.outlined(label='Localização no cabo' color='#1f2f46' v-model="location")
-              q-btn(
-                @click="searchAnalysis"
-                color="accent"
-                no-caps
-                number
-                icon='search'
-              )
+            q-select.filled(
+                    label='Localização no cabo'
+                    color='#1f2f46'
+                    v-model="analysisId"
+                    :options="selectOptions"
+                    option-value="id"
+                    option-label="position_start"
+                    map-options)
+            q-btn(
+              @click="searchAnalysis"
+              color="accent"
+              no-caps
+              number
+              icon='search'
+            )
+
         div.row
           div.col
             div.text-bold Análise {{ location }}
@@ -115,7 +123,8 @@ export default {
   data () {
     return {
       location: null,
-      analysis: {}
+      analysis: {},
+      analysisId: 0
     }
   },
   methods: {
@@ -130,6 +139,14 @@ export default {
         this.$q.notify({ message: 'Não existe nenhuma análise nessa posição', color: 'negative', icon: 'mdi-alert-circle-outline' })
         throw err
       }
+    }
+  },
+  computed: {
+    selectOptions () {
+      let options = this.report.analysis.map(a => {
+        return { id: a.id, position_start: a.position_start }
+      })
+      return options
     }
   }
 }
