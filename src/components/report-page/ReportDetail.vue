@@ -86,9 +86,9 @@
               q-separator
               div.attribute.flex
                 div.label Problemas:
-                div.value {{ 'Ruptura' }}
+                div.value {{ analysisProblem }}
           div.col
-            q-img(:src="'https://cdn.quasar.dev/img/parallax2.jpg'" :ratio="1")
+            q-img(:src="imagePath" :ratio="1")
 
 </template>
 
@@ -186,6 +186,12 @@ export default {
     },
     analysisState () {
       return this.analysis.state === 'normal' ? 'Normal' : 'Danificado'
+    },
+    analysisProblem () {
+      return this.analysis.state === 'normal' ? 'Nenhum' : 'Ruptura'
+    },
+    imagePath () {
+      return this.analysis.image_path.replace('/server', '')
     }
   }
 }
