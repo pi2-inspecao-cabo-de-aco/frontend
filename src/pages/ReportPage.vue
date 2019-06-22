@@ -18,8 +18,10 @@
           span {{ endPosition }}cm
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
-        div.value.text-center.text-white
-          span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
+        //- div.value.text-center.text-white
+        //-   span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
+        div(:class="[ getColor ]").value.text-center.text-white
+          span {{ (!reporting && !reportCreated) ? '-' : currentSensorState }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
@@ -100,7 +102,6 @@ export default {
       endCablePosition: {
         query: END_CABLE_SUBSCRIPTION,
         result ({ data }) {
-          console.log(data)
           if (data) {
             this.isEndCable = true
             this.endCablePosition = data.endCable
@@ -124,7 +125,12 @@ export default {
       robotDivSize: 0,
       reportId: '',
       isEndCable: false,
-      endCablePosition: +Infinity
+      endCablePosition: +Infinity,
+      colors: {
+        'Normal': 'text-positive',
+        'Danificado': 'text-yellow-9',
+        'Muito danificado': 'text-red-9'
+      }
     }
   },
   computed: {
@@ -132,17 +138,24 @@ export default {
       'currentCable'
     ]),
     ...mapGetters('analysis', [
+      'currentAnalysis',
       'position',
       'cable'
     ]),
     startPosition () {
       return (this.position.start || 0) / 10
     },
+    getColor () {
+      return this.colors[this.currentSensorState]
+    },
     endPosition () {
       return (this.position.end || 0) / 10
     },
     cableSize () {
       return (this.cable.size || 0) / 10
+    },
+    currentSensorState () {
+      return (this.currentAnalysis || {}).state || '-'
     },
     manualError () {
       return this.manualErrorName ? this.manualErrorName : 'Nenhum'
@@ -156,8 +169,7 @@ export default {
   methods: {
     ...mapActions('cables', [
       'setCurrentCable'
-    ]
-    ),
+    ]),
     async sendStartOrPauseCommand () {
       try {
         if (!this.reporting) {
