@@ -128,7 +128,11 @@ export default {
       location: null,
       analysis: null,
       analysisId: 0,
-      states: null,
+      states: {
+        danificado: 0,
+        muitoDanificado: 0,
+        normal: 0
+      },
       reportsType: {
         auto: 0,
         manu: 0
@@ -149,12 +153,6 @@ export default {
     },
     showAttr (attr) {
       return (attr || '-')
-    },
-    updateDataInfo () {
-      this.report.analysis.map(a => {
-        // reports automaticos e manuais
-        a.manual_state != null ? this.reportsType.manu += 1 : this.reportsType.auto += 1
-      })
     }
   },
   computed: {
@@ -198,8 +196,11 @@ export default {
       return this.analysis.image_path.replace('/server', '')
     }
   },
-  created () {
-    this.updateDataInfo()
+  mounted () {
+    this.report.analysis.map(a => {
+      // reports automaticos e manuais
+      a.manual_state != null ? this.reportsType.manu += 1 : this.reportsType.auto += 1
+    })
   }
 }
 </script>
