@@ -152,16 +152,8 @@ export default {
     },
     updateDataInfo () {
       this.report.analysis.map(a => {
-        // oxidacoes e rupturas
-        if (a.state === 'Normal') {
-          this.cableInfo.normal += 1
-        } else if (a.state === 'Danificado') {
-          this.cableInfo.rups += 1
-        } else if (a.state === 'Muito danificado') {
-          this.cableInfo.muitoDan += 1
-        }
         // reports automaticos e manuais
-        a.manual_state ? this.reportsType.manu += 1 : this.reportsType.auto += 1
+        a.manual_state != null ? this.reportsType.manu += 1 : this.reportsType.auto += 1
       })
     }
   },
@@ -197,14 +189,17 @@ export default {
       return (this.currentCable || { id: '', lifespan: '' })
     },
     analysisState () {
-      return this.analysis.state === 'normal' ? 'Normal' : 'Danificado'
+      return this.analysis.state
     },
     analysisProblem () {
-      return this.analysis.state === 'normal' ? 'Nenhum' : 'Ruptura'
+      return this.analysis.state === 'Normal' ? 'Nenhum' : 'Ruptura'
     },
     imagePath () {
       return this.analysis.image_path.replace('/server', '')
     }
+  },
+  created () {
+    this.updateDataInfo()
   }
 }
 </script>
