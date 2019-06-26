@@ -20,6 +20,13 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/ReportPage.vue') }
     ]
+  },
+  {
+    path: '/report/show',
+    component: () => import('layouts/TopBarLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ShowReportPage.vue') }
+    ]
   }
 ]
 

@@ -1,6 +1,9 @@
 query reportAnalysis ($reportId: ID!) {
   reportAnalysis (reportId: $reportId) {
     id
+    position_start
+    position_end
     image_path
+    state
   }
 }

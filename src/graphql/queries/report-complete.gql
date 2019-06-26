@@ -1,0 +1,14 @@
+query reportComplete ($id: ID!) {
+  reportComplete (id: $id) {
+    id
+    start
+    end
+    alert_level
+    analysis {
+      id
+      position_start
+      position_end
+      manual_state
+    }
+  }
+}

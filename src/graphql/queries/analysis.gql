@@ -1,0 +1,10 @@
+query analysis ($id: ID!) {
+  analysis (id: $id) {
+    id
+    position_start
+    position_end
+    image_path
+    state
+    manual_state
+  }
+}

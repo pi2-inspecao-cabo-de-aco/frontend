@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import cables from './cables'
 import analysis from './analysis'
+import reports from './reports'
 
 Vue.use(Vuex)
 
@@ -15,7 +16,8 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       cables,
-      analysis
+      analysis,
+      reports
     },
 
     // enable strict mode (adds overhead!)
