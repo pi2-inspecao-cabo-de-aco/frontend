@@ -4,7 +4,7 @@
 
 <script>
 import REPORT_COMPLETE from '../graphql/queries/report-complete.gql'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ShowReportPage',
@@ -20,7 +20,6 @@ export default {
         },
         fetchPolicy: 'network-only',
         update (data) {
-          console.log(data.reportComplete)
           return data.reportComplete
         }
       }

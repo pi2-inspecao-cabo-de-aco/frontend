@@ -79,7 +79,6 @@ export default {
       return d.toFormat('dd/MM/yyyy - HH:mm:ss')
     },
     showReport () {
-      console.log(this.$vnode.key)
       this.setCurrentReportId(this.$vnode.key)
       this.$router.push('/report/show')
     }

@@ -162,8 +162,11 @@ export default {
     ...mapGetters('reports', [
       'currentReportId'
     ]),
+    reportAnalysis () {
+      return this.report.analysis || []
+    },
     selectOptions () {
-      let options = this.report.analysis.map(a => {
+      let options = this.reportAnalysis.map(a => {
         return { id: a.id, position_start: a.position_start }
       })
       return options
@@ -183,7 +186,6 @@ export default {
       return d.toFormat('mm:ss')
     },
     cable () {
-      console.log(this.currentCable)
       return (this.currentCable || { id: '', lifespan: '' })
     },
     analysisState () {
@@ -197,7 +199,7 @@ export default {
     }
   },
   mounted () {
-    this.report.analysis.map(a => {
+    this.reportAnalysis.map(a => {
       // reports automaticos e manuais
       a.manual_state != null ? this.reportsType.manu += 1 : this.reportsType.auto += 1
     })
