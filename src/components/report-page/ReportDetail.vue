@@ -7,22 +7,25 @@
           div.col
             q-card
               div.attribute.flex
-                div.label Pontos de ruptura:
-                div.value {{ cableInfo.rups }}
+                div.label Pontos danificados:
+                div.value {{ states.danificado }}
+              q-separator
+              div.attribute.flex
+                div.label Pontos muito danificados:
+                div.value {{ states.muitoDanificado }}
               q-separator
               div.attribute.flex
                 div.label Pontos em bom estado:
-                div.value {{ cableInfo.normal }}
-              q-separator
-              div.attribute.flex
-                div.label Status geral:
-                div.value {{ showAttr(cable.general_state) }}
+                div.value {{ states.normal }}
           div.col
             q-card
               div.attribute.flex
                 div.label Tamanho do cabo:
                 div.value {{ showAttr(cable.size) }} cm
               q-separator
+              div.attribute.flex
+                div.label Status geral:
+                div.value {{ showAttr(cable.general_state) }}
 
       div.report-detail.col-auto
         div.text-h6 Informações do Monitoramento
@@ -30,11 +33,11 @@
           div.col
             q-card
               div.attribute.flex
-                div.label Reportes Manuais:
+                div.label Análises Manuais:
                 div.value {{ reportsType.manu }}
               q-separator
               div.attribute.flex
-                div.label Reportes automáticos:
+                div.label Análises automáticas:
                 div.value {{ reportsType.auto }}
               q-separator
               div.attribute.flex
@@ -88,6 +91,7 @@
 <script>
 import { DateTime } from 'luxon'
 import ANALYSIS from '../../graphql/queries/analysis.gql'
+import REPORT_ERRORS from '../../graphql/queries/report-errors.gql'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -105,6 +109,18 @@ export default {
           return data.analysis
         }
       }
+    },
+    states () {
+      return {
+        query: REPORT_ERRORS,
+        fetchPolicy: 'network-only',
+        variables: {
+          id: this.currentReportId
+        },
+        update (data) {
+          return data.reportErrors
+        }
+      }
     }
   },
   data () {
@@ -112,10 +128,7 @@ export default {
       location: null,
       analysis: null,
       analysisId: 0,
-      cableInfo: {
-        normal: 0,
-        rups: 0
-      },
+      states: null,
       reportsType: {
         auto: 0,
         manu: 0
@@ -140,10 +153,12 @@ export default {
     updateDataInfo () {
       this.report.analysis.map(a => {
         // oxidacoes e rupturas
-        if (a.state === 'normal') {
+        if (a.state === 'Normal') {
           this.cableInfo.normal += 1
-        } else if (a.state === 'rup') {
+        } else if (a.state === 'Danificado') {
           this.cableInfo.rups += 1
+        } else if (a.state === 'Muito danificado') {
+          this.cableInfo.muitoDan += 1
         }
         // reports automaticos e manuais
         a.manual_state ? this.reportsType.manu += 1 : this.reportsType.auto += 1
@@ -153,6 +168,9 @@ export default {
   computed: {
     ...mapGetters('cables', [
       'currentCable'
+    ]),
+    ...mapGetters('reports', [
+      'currentReportId'
     ]),
     selectOptions () {
       let options = this.report.analysis.map(a => {
@@ -168,10 +186,11 @@ export default {
       return this.analysis != null
     },
     totalTime () {
-      let start = new Date(this.report.start).valueOf()
-      let end = new Date(this.report.end).valueOf()
-      let total = DateTime.fromMillis(end - start)
-      return total.toFormat('dd - HH:mm:ss')
+      let start = new Date(this.report.start)
+      let end = new Date(this.report.end)
+      let total = Math.abs(end - start)
+      let d = DateTime.fromMillis(total)
+      return d.toFormat('mm:ss')
     },
     cable () {
       console.log(this.currentCable)

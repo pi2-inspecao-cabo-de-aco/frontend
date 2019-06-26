@@ -1,0 +1,7 @@
+query reportErrors ($id: ID!) {
+  reportErrors (id: $id) {
+    normal
+    danificado
+    muitoDanificado
+  }
+}
