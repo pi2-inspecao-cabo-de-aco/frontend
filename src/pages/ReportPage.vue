@@ -18,8 +18,10 @@
           span {{ endPosition }}cm
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
-        div.value.text-center.text-white
-          span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
+        //- div.value.text-center.text-white
+        //-   span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
+        div(:class="[ getColor ]").value.text-center.text-white
+          span {{ (!reporting && !reportCreated) ? '-' : currentSensorState }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
@@ -68,6 +70,7 @@
             round
             icon="mdi-arrow-right-bold"
             size="32px"
+            :disabled="isEndCable"
           ).shadow-global
         div.column.items-center.justify-center.q-mt-md
           q-btn(
@@ -86,12 +89,31 @@ import { mapGetters, mapActions } from 'vuex'
 import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
 import UPDATE_REPORT from '../graphql/mutations/update-report.gql'
+import END_CABLE_SUBSCRIPTION from '../graphql/subscriptions/end-cable.gql'
 
 export default {
   name: 'ReportPage',
   components: {
     ImageRenderer: () => import('../components/ImageRender'),
     ErrorModal: () => import('../components/report-page/ErrorModal')
+  },
+  apollo: {
+    $subscribe: {
+      endCablePosition: {
+        query: END_CABLE_SUBSCRIPTION,
+        result ({ data }) {
+          if (data) {
+            this.isEndCable = true
+            this.endCablePosition = data.endCable
+            this.$q.notify({
+              message: 'Sensor de fim de curso identificou um fim.',
+              color: 'warning',
+              icon: 'mdi-alert-circle-outline'
+            })
+          }
+        }
+      }
+    }
   },
   data () {
     return {
@@ -101,7 +123,14 @@ export default {
       manualErrorName: '',
       currentPosition: 0,
       robotDivSize: 0,
-      reportId: ''
+      reportId: '',
+      isEndCable: false,
+      endCablePosition: +Infinity,
+      colors: {
+        'Normal': 'text-positive',
+        'Danificado': 'text-yellow-9',
+        'Muito danificado': 'text-red-9'
+      }
     }
   },
   computed: {
@@ -109,17 +138,24 @@ export default {
       'currentCable'
     ]),
     ...mapGetters('analysis', [
+      'currentAnalysis',
       'position',
       'cable'
     ]),
     startPosition () {
       return (this.position.start || 0) / 10
     },
+    getColor () {
+      return this.colors[this.currentSensorState]
+    },
     endPosition () {
       return (this.position.end || 0) / 10
     },
     cableSize () {
       return (this.cable.size || 0) / 10
+    },
+    currentSensorState () {
+      return (this.currentAnalysis || {}).state || '-'
     },
     manualError () {
       return this.manualErrorName ? this.manualErrorName : 'Nenhum'
@@ -133,8 +169,7 @@ export default {
   methods: {
     ...mapActions('cables', [
       'setCurrentCable'
-    ]
-    ),
+    ]),
     async sendStartOrPauseCommand () {
       try {
         if (!this.reporting) {
