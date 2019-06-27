@@ -26,10 +26,12 @@
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
           span {{ (!reporting && !reportCreated) ? '-' : manualError }}
-      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md.card-rna
-        div.label.text-grey-4.q-mb-sm Reporte da Rede Neural
-        div.value.text-center.text-white
-          span -
+      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
+        div.label.text-grey-4 Rede Neural
+        div(v-if="!reporting && !reportCreated").position.text-center.text-white -
+        div(v-else).text-center.text-white
+          span.value 0
+          div imagens analisadas
     div.full-width.flex
       image-renderer
       div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
@@ -126,10 +128,11 @@ export default {
       reportId: '',
       isEndCable: false,
       endCablePosition: +Infinity,
+      errorIds: [],
       colors: {
         'Normal': 'text-positive',
         'Danificado': 'text-yellow-9',
-        'Muito danificado': 'text-red-9'
+        'Muito danificado': ['text-red-9', 'font-26']
       }
     }
   },
@@ -170,6 +173,39 @@ export default {
     ...mapActions('cables', [
       'setCurrentCable'
     ]),
+    createCableAlert (color) {
+      let cable = this.$refs.robot
+      let div = document.createElement('div')
+      div.style.width = '15px'
+      div.id = this.currentAnalysis.id
+      div.style.height = '15px'
+      div.style.background = color
+      div.style.position = 'absolute'
+      div.style.marginLeft = this.robotPosition
+      div.style.height = 'la la la'
+      div.style.marginTop = '20px'
+      div.style.zIndex = 1000
+      cable.appendChild(div)
+      div.classList.add('animate-pop')
+    },
+    addAlertToCable () {
+      let color = {
+        'Danificado': '#f9a825',
+        'Muito danificado': '#c62828'
+      }
+      let isError = (this.currentSensorState === 'Danificado' || this.currentSensorState === 'Muito danificado')
+      if (isError) {
+        this.createCableAlert(color[this.currentSensorState])
+        this.errorIds.push(this.currentAnalysis.id)
+      }
+    },
+    cleanErrorAlerts () {
+      for (let err of this.errorIds) {
+        let div = document.getElementById(err)
+        div.remove()
+      }
+      this.errorIds = []
+    },
     async sendStartOrPauseCommand () {
       try {
         if (!this.reporting) {
@@ -200,6 +236,7 @@ export default {
         this.updateCable()
         this.updateReport()
         this.reportId = ''
+        this.cleanErrorAlerts()
         this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
       } catch (err) {
         this.reporting = false
@@ -276,6 +313,9 @@ export default {
   watch: {
     position: function (val) {
       this.manualErrorName = ''
+    },
+    robotPosition: function () {
+      this.addAlertToCable()
     }
   }
 }
@@ -313,6 +353,7 @@ export default {
   position absolute
   margin-top 0.5px
   transition all 1.2s ease
+  z-index 1001
 
 .cable
   height 8px
@@ -320,4 +361,7 @@ export default {
 .btn
   padding 15px 30px
   border-radius 30px !important
+
+.font-26
+  font-size 26px
 </style>
