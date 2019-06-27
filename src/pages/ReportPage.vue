@@ -176,13 +176,12 @@ export default {
     createCableAlert (color) {
       let cable = this.$refs.robot
       let div = document.createElement('div')
-      div.style.width = '15px'
+      div.style.width = `${((5) / this.cableSize) * (this.robotDivSize - 150)}px`
       div.id = this.currentAnalysis.id
       div.style.height = '15px'
       div.style.background = color
       div.style.position = 'absolute'
       div.style.marginLeft = this.robotPosition
-      div.style.height = 'la la la'
       div.style.marginTop = '20px'
       div.style.zIndex = 1000
       cable.appendChild(div)
