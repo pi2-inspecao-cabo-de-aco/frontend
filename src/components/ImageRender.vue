@@ -3,42 +3,24 @@
 </template>
 
 <script>
-import ANALYSIS_WAS_CREATED from '../graphql/subscriptions/analysis.gql'
 import { QImg } from 'quasar'
-import { mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ImageRender',
   components: {
     QImg
   },
-  apollo: {
-    $subscribe: {
-      analysis: {
-        query: ANALYSIS_WAS_CREATED,
-        result ({ data }) {
-          if (data) {
-            this.analysis = data.analysisWasCreated
-            this.setCurrentAnalysis(data.analysisWasCreated)
-          }
-        }
-      }
-    }
-  },
-  data () {
-    return {
-      analysis: {}
-    }
-  },
   computed: {
+    ...mapGetters('analysis', [
+      'currentAnalysis'
+    ]),
+    analysis () {
+      return this.currentAnalysis || {}
+    },
     imagePath () {
       return (this.analysis.image_path || '').replace('/server', '')
     }
-  },
-  methods: {
-    ...mapActions('analysis', [
-      'setCurrentAnalysis'
-    ])
   }
 }
 </script>

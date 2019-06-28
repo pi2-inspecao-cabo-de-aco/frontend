@@ -92,6 +92,7 @@ import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
 import UPDATE_REPORT from '../graphql/mutations/update-report.gql'
 import END_CABLE_SUBSCRIPTION from '../graphql/subscriptions/end-cable.gql'
+import ANALYSIS_WAS_CREATED from '../graphql/subscriptions/analysis.gql'
 
 export default {
   name: 'ReportPage',
@@ -114,11 +115,20 @@ export default {
             })
           }
         }
+      },
+      analysis: {
+        query: ANALYSIS_WAS_CREATED,
+        result ({ data }) {
+          if (data) {
+            this.setCurrentAnalysis(data.analysisWasCreated)
+          }
+        }
       }
     }
   },
   data () {
     return {
+      finished: false,
       reportCreated: false,
       reporting: false,
       errorVisibility: false,
@@ -172,6 +182,9 @@ export default {
   methods: {
     ...mapActions('cables', [
       'setCurrentCable'
+    ]),
+    ...mapActions('analysis', [
+      'setCurrentAnalysis'
     ]),
     createCableAlert (color) {
       let cable = this.$refs.robot
@@ -310,10 +323,10 @@ export default {
     this.robotDivSize = this.$refs.robot.clientWidth
   },
   watch: {
-    position: function (val) {
+    position (val) {
       this.manualErrorName = ''
     },
-    robotPosition: function () {
+    robotPosition () {
       this.addAlertToCable()
     }
   }
