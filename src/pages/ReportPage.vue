@@ -48,6 +48,7 @@
             :color="reporting ? 'grey-5' : 'positive'"
             round
             :icon="reporting ? 'mdi-pause' : 'mdi-play'"
+            :disabled="finished"
             size="32px"
           ).shadow-global
         div.flex.items-center.justify-center
@@ -72,7 +73,7 @@
             round
             icon="mdi-arrow-right-bold"
             size="32px"
-            :disabled="isEndCable"
+            :disabled="isEndCable || finished"
           ).shadow-global
         div.column.items-center.justify-center.q-mt-md
           q-btn(
@@ -118,9 +119,17 @@ export default {
       },
       analysis: {
         query: ANALYSIS_WAS_CREATED,
-        result ({ data }) {
-          if (data) {
+        async result ({ data }) {
+          let analysis = data.analysisWasCreated
+          let endPosition = parseInt(analysis.position_end) / 10
+          let goingBack = endPosition < this.endPosition
+          if ((data && !this.finished) || goingBack) {
             this.setCurrentAnalysis(data.analysisWasCreated)
+          } else {
+            if (this.finished) {
+              this.reporting = false
+              await stop()
+            }
           }
         }
       }
@@ -128,7 +137,6 @@ export default {
   },
   data () {
     return {
-      finished: false,
       reportCreated: false,
       reporting: false,
       errorVisibility: false,
@@ -155,6 +163,9 @@ export default {
       'position',
       'cable'
     ]),
+    finished () {
+      return this.endPosition >= this.cableSize
+    },
     startPosition () {
       return (this.position.start || 0) / 10
     },
@@ -165,7 +176,7 @@ export default {
       return (this.position.end || 0) / 10
     },
     cableSize () {
-      return (this.cable.size || 0) / 10
+      return (this.cable.size || +Infinity) / 10
     },
     currentSensorState () {
       return (this.currentAnalysis || {}).state || '-'
@@ -234,6 +245,7 @@ export default {
     },
     async sendDirectionCommand (orientation) {
       try {
+        this.reporting = false
         await direction(orientation)
       } catch (err) {
         this.reporting = false
