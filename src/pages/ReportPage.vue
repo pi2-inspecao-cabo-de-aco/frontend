@@ -87,6 +87,7 @@
 
 <script>
 import { start, pause, direction, reset } from '../api/commands'
+import analyze from '../api/analyze'
 import { mapGetters, mapActions } from 'vuex'
 
 import CREATE_REPORT from '../graphql/mutations/create-report.gql'
@@ -137,6 +138,8 @@ export default {
   },
   data () {
     return {
+      imagesToAnalyse: [],
+      analyzes: [],
       reportCreated: false,
       reporting: false,
       errorVisibility: false,
@@ -240,7 +243,7 @@ export default {
         }
       } catch (err) {
         this.reporting = false
-        console.log(err)
+        throw err
       }
     },
     async sendDirectionCommand (orientation) {
@@ -263,6 +266,7 @@ export default {
         this.reportId = ''
         this.cleanErrorAlerts()
         this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
+        await this.analyzeImages()
       } catch (err) {
         this.reporting = false
         console.log(err)
@@ -330,6 +334,26 @@ export default {
         this.$q.notify({ message: 'Não foi possível atualizar as informações cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
         throw err
       }
+    },
+    saveAnalysisImages () {
+      this.imagesToAnalyse.push({
+        id: (this.currentAnalysis || {}).id,
+        image_path: (this.currentAnalysis || {}).image_path.replace('/server', '')
+      })
+    },
+    async analyzeImages () {
+      try {
+        for (let image of this.imagesToAnalyse) {
+          let body = { img: image.image_path }
+          let analyzedImage = await analyze(body)
+          let condition = analyzedImage.data.condition
+          console.log(condition)
+          this.analyzes.push()
+        }
+        this.imagesToAnalyse = []
+      } catch (err) {
+        throw err
+      }
     }
   },
   mounted () {
@@ -341,6 +365,9 @@ export default {
     },
     robotPosition () {
       this.addAlertToCable()
+      if (this.reporting) {
+        this.saveAnalysisImages()
+      }
     }
   }
 }
