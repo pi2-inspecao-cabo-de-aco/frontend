@@ -48,6 +48,7 @@
             :color="reporting ? 'grey-5' : 'positive'"
             round
             :icon="reporting ? 'mdi-pause' : 'mdi-play'"
+            :disabled="finished"
             size="32px"
           ).shadow-global
         div.flex.items-center.justify-center
@@ -72,7 +73,7 @@
             round
             icon="mdi-arrow-right-bold"
             size="32px"
-            :disabled="isEndCable"
+            :disabled="isEndCable || finished"
           ).shadow-global
         div.column.items-center.justify-center.q-mt-md
           q-btn(
@@ -92,6 +93,7 @@ import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
 import UPDATE_REPORT from '../graphql/mutations/update-report.gql'
 import END_CABLE_SUBSCRIPTION from '../graphql/subscriptions/end-cable.gql'
+import ANALYSIS_WAS_CREATED from '../graphql/subscriptions/analysis.gql'
 
 export default {
   name: 'ReportPage',
@@ -112,6 +114,22 @@ export default {
               color: 'warning',
               icon: 'mdi-alert-circle-outline'
             })
+          }
+        }
+      },
+      analysis: {
+        query: ANALYSIS_WAS_CREATED,
+        async result ({ data }) {
+          let analysis = data.analysisWasCreated
+          let endPosition = parseInt(analysis.position_end) / 10
+          let goingBack = endPosition < this.endPosition
+          if ((data && !this.finished) || goingBack) {
+            this.setCurrentAnalysis(data.analysisWasCreated)
+          } else {
+            if (this.finished) {
+              this.reporting = false
+              await stop()
+            }
           }
         }
       }
@@ -145,6 +163,9 @@ export default {
       'position',
       'cable'
     ]),
+    finished () {
+      return this.endPosition >= this.cableSize
+    },
     startPosition () {
       return (this.position.start || 0) / 10
     },
@@ -155,7 +176,7 @@ export default {
       return (this.position.end || 0) / 10
     },
     cableSize () {
-      return (this.cable.size || 0) / 10
+      return (this.cable.size || +Infinity) / 10
     },
     currentSensorState () {
       return (this.currentAnalysis || {}).state || '-'
@@ -172,6 +193,9 @@ export default {
   methods: {
     ...mapActions('cables', [
       'setCurrentCable'
+    ]),
+    ...mapActions('analysis', [
+      'setCurrentAnalysis'
     ]),
     createCableAlert (color) {
       let cable = this.$refs.robot
@@ -221,6 +245,7 @@ export default {
     },
     async sendDirectionCommand (orientation) {
       try {
+        this.reporting = false
         await direction(orientation)
       } catch (err) {
         this.reporting = false
@@ -310,10 +335,10 @@ export default {
     this.robotDivSize = this.$refs.robot.clientWidth
   },
   watch: {
-    position: function (val) {
+    position (val) {
       this.manualErrorName = ''
     },
-    robotPosition: function () {
+    robotPosition () {
       this.addAlertToCable()
     }
   }
