@@ -247,6 +247,7 @@ export default {
       try {
         this.reporting = false
         await direction(orientation)
+        this.reporting = false
       } catch (err) {
         this.reporting = false
         console.log(err)
