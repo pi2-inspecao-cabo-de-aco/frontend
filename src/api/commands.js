@@ -1,23 +1,23 @@
-import api from '.'
+import { robotApi } from '.'
 
 async function start () {
-  return api.post('/control', { command: 'start' })
+  return robotApi.post('/control', { command: 'start' })
 }
 
 async function pause () {
-  return api.post('/control', { command: 'pause' })
+  return robotApi.post('/control', { command: 'pause' })
 }
 
 async function test () {
-  return api.get('/control')
+  return robotApi.get('/control')
 }
 
 async function direction (direction) {
-  return api.post('/control', { command: direction })
+  return robotApi.post('/control', { command: direction })
 }
 
 async function reset () {
-  return api.post('/control', { command: 'reset' })
+  return robotApi.post('/control', { command: 'reset' })
 }
 
 export {
