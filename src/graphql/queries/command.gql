@@ -1,0 +1,6 @@
+query command ($command: String) {
+  command (command: $command) {
+    command
+    status
+  }
+}

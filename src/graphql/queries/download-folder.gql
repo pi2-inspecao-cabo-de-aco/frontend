@@ -1,0 +1,6 @@
+query downloadFolder ($step: Int!) {
+  downloadFolder (step: $step) {
+    step
+    download
+  }
+}
