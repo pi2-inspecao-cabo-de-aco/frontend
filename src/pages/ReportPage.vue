@@ -104,6 +104,7 @@ import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
 import UPDATE_REPORT from '../graphql/mutations/update-report.gql'
 import END_CABLE_SUBSCRIPTION from '../graphql/subscriptions/end-cable.gql'
 import ANALYSIS_WAS_CREATED from '../graphql/subscriptions/analysis.gql'
+import COMMAND from '../graphql/queries/command.gql'
 
 export default {
   name: 'ReportPage',
@@ -114,6 +115,13 @@ export default {
     SummaryReport: () => import('../components/report-page/SummaryReport')
   },
   apollo: {
+    command () {
+      return {
+        query: COMMAND,
+        skip: true,
+        fetchPolicy: 'network-only'
+      }
+    },
     $subscribe: {
       endCablePosition: {
         query: END_CABLE_SUBSCRIPTION,
@@ -261,10 +269,12 @@ export default {
       try {
         if (!this.reporting) {
           this.reporting = !this.reporting
-          await start()
+          // await start()
+          await this.sendCommand(4)
         } else {
           this.reporting = !this.reporting
-          await pause()
+          // await pause()
+          await this.sendCommand(0)
         }
       } catch (err) {
         this.reporting = false
@@ -272,9 +282,11 @@ export default {
       }
     },
     async sendDirectionCommand (orientation) {
+      // orientation 2 = left, 3 = right
       try {
         this.reporting = false
-        await direction(orientation)
+        // await direction(orientation)
+        await this.sendCommand(orientation)
         this.reporting = false
       } catch (err) {
         this.reporting = false
@@ -283,7 +295,8 @@ export default {
     },
     async sendResetCommand () {
       try {
-        await reset()
+        // await reset()
+        await this.sendCommand(1)
         this.reporting = false
         this.reportCreated = false
         this.updateCable()
@@ -328,7 +341,8 @@ export default {
           this.$q.notify({ message: 'Monitoramento iniciado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
           this.reportCreated = true
           this.reporting = true
-          await start()
+          // await start()
+          await this.sendCommand(4)
         } catch (err) {
           this.$q.notify({ message: 'Não foi possível iniciar o monitoramento', color: 'negative', icon: 'mdi-alert-circle-outline' })
           throw err
@@ -392,6 +406,17 @@ export default {
     },
     updateAnalysisLength (length) {
       this.analysisLength = length
+    },
+    async sendCommand (command) {
+      try {
+        this.$apollo.queries.command.setVariables({
+          command: command
+        })
+        this.$apollo.queries.command.skip = false
+        this.$apollo.queries.command.skip = true
+      } catch (err) {
+        console.log(err)
+      }
     }
   },
   mounted () {

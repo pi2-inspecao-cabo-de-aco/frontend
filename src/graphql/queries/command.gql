@@ -1,4 +1,4 @@
-query command ($command: String) {
+query command ($command: Int!) {
   command (command: $command) {
     command
     status
