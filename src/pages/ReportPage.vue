@@ -337,10 +337,14 @@ export default {
         throw err
       }
     },
+    fixPath (path) {
+      let fixedPath = path.replace('/server', '')
+      return fixedPath.replace('merged-image.png', '')
+    },
     saveAnalysisImages () {
       this.imagesToAnalyze.push({
         id: (this.currentAnalysis || {}).id,
-        image_path: (this.currentAnalysis || {}).image_path.replace('/server', '')
+        path: this.fixPath((this.currentAnalysis || {}).image_path)
       })
     }
   },
