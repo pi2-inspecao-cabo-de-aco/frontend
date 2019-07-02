@@ -2,8 +2,15 @@
   q-page.report-page.full-width.q-py-lg.q-mb-xl.flex.items-center
     error-modal(
       :visibility="errorVisibility"
-      async @change-visibility="changeErrorModalVisibility"
+      @change-visibility="changeErrorModalVisibility"
       @send-error-name="setErrorName"
+    )
+    cnn-analyzer(
+      ref="cnnAnalyzer"
+      :opened="cnnDialogOpened"
+      :images-to-analyze="imagesToAnalyze"
+      @close-cnn-dialog="cnnDialogOpened = false"
+      @clean-images-to-analyze="imagesToAnalyze = []"
     )
     div(ref="robot").full-width.flex.q-mb-lg
       div.full-width.cable.bg-grey-7.q-my-lg
@@ -18,20 +25,12 @@
           span {{ endPosition }}cm
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
-        //- div.value.text-center.text-white
-        //-   span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
         div(:class="[ getColor ]").value.text-center.text-white
           span {{ (!reporting && !reportCreated) ? '-' : currentSensorState }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
           span {{ (!reporting && !reportCreated) ? '-' : manualError }}
-      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
-        div.label.text-grey-4 Rede Neural
-        div(v-if="!reporting && !reportCreated").position.text-center.text-white -
-        div(v-else).text-center.text-white
-          span.value 0
-          div imagens analisadas
     div.full-width.flex
       image-renderer
       div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
@@ -99,7 +98,8 @@ export default {
   name: 'ReportPage',
   components: {
     ImageRenderer: () => import('../components/ImageRender'),
-    ErrorModal: () => import('../components/report-page/ErrorModal')
+    ErrorModal: () => import('../components/report-page/ErrorModal'),
+    CnnAnalyzer: () => import('../components/report-page/CnnAnalyzerDialog')
   },
   apollo: {
     $subscribe: {
@@ -137,6 +137,10 @@ export default {
   },
   data () {
     return {
+      imagesToAnalyze: [],
+      analyzes: [],
+      analyzedImagesCount: [],
+      cnnDialogOpened: false,
       reportCreated: false,
       reporting: false,
       errorVisibility: false,
@@ -240,7 +244,7 @@ export default {
         }
       } catch (err) {
         this.reporting = false
-        console.log(err)
+        throw err
       }
     },
     async sendDirectionCommand (orientation) {
@@ -263,6 +267,8 @@ export default {
         this.reportId = ''
         this.cleanErrorAlerts()
         this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
+        this.cnnDialogOpened = true
+        await this.$refs.cnnAnalyzer.analyzeImages()
       } catch (err) {
         this.reporting = false
         console.log(err)
@@ -330,6 +336,16 @@ export default {
         this.$q.notify({ message: 'Não foi possível atualizar as informações cabo', color: 'negative', icon: 'mdi-alert-circle-outline' })
         throw err
       }
+    },
+    fixPath (path) {
+      let fixedPath = path.replace('/server', '')
+      return fixedPath.replace('merged-image.png', '')
+    },
+    saveAnalysisImages () {
+      this.imagesToAnalyze.push({
+        id: (this.currentAnalysis || {}).id,
+        path: this.fixPath((this.currentAnalysis || {}).image_path)
+      })
     }
   },
   mounted () {
@@ -341,6 +357,9 @@ export default {
     },
     robotPosition () {
       this.addAlertToCable()
+      if (this.reporting) {
+        this.saveAnalysisImages()
+      }
     }
   }
 }
