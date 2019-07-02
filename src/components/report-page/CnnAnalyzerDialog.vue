@@ -63,6 +63,8 @@ export default {
   },
   methods: {
     async analyzeImages () {
+      this.resetValues()
+      this.analyzing = true
       try {
         for (let image of this.imagesToAnalyze) {
           let condition = await this.analyzeFolderImages(image.path)
@@ -95,6 +97,11 @@ export default {
     },
     close () {
       this.$emit('close-cnn-dialog')
+    },
+    resetValues () {
+      this.count = 0
+      this.normal = 0
+      this.error = 0
     }
   }
 }

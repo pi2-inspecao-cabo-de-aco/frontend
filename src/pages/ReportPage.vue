@@ -10,7 +10,7 @@
       :opened="cnnDialogOpened"
       :images-to-analyze="imagesToAnalyze"
       @close-cnn-dialog="cnnDialogOpened = false"
-      @clean-images-to-analyze="cleanImagesToAnalyze = []"
+      @clean-images-to-analyze="imagesToAnalyze = []"
     )
     div(ref="robot").full-width.flex.q-mb-lg
       div.full-width.cable.bg-grey-7.q-my-lg
