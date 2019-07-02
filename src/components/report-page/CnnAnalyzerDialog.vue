@@ -2,18 +2,39 @@
   q-dialog(v-model="opened" persistent)
     div.cnn-analyze.bg-primary.full-width
       div(v-if="analyzing").column.items-center.text-white.q-pa-md.q-pb-xl
-        img(src="../../assets/dna-loading.svg")
+        img(src="../../assets/dna-loading.svg").animate-pop
         div.text-h6.text-center
           | A Rede Neural está analisando as fotos
           q-spinner-comment(size="30px" color="primary").comment
         div.text-h2.text-center.q-mt-md.text-bold
-          span 5/16
+          span {{ count }}
+          span /
+          span {{ imagesToAnalizeLength }}
         div.text-body1.text-center.q-mb-xl fotos analisadas
-        q-btn(color="accent" no-caps).no-shadow.btn Encerrar Monitoramento
-      div(v-else).column.items-center.text-white.q-pa-md
+      div(v-else).column.items-center.text-white.q-pa-md.animate-fade
+        div.flex.q-mb-lg.q-mt-md
+          q-img(src="../../assets/logo3.png").q-mb-lg
+          div.text-h2.text-center.text-bold.q-mr-sm
+            span {{ imagesToAnalizeLength }}
+          div.column.justify-center
+            div.text-body1.text-center fotos analisadas
+            div.text-body1.text-center pela Rede Neural
+        div.flex.text-h5.q-mb-xs
+          span.text-positive.q-pr-sm.text-bold Normal:
+          span.text-white {{ normal }} fotos
+        div.flex.text-h5.q-mb-xl
+          span.text-yellow-9.q-pr-sm.text-bold Danificado:
+          span.text-white {{ error }} fotos
+        q-btn(
+          color="accent"
+          no-caps
+          @click="close"
+        ).no-shadow.btn.q-mb-md Ver relatório final
 </template>
 
 <script>
+import analyze from '../../api/analyze'
+
 export default {
   name: 'CnnAnalyzerDialog',
   props: {
@@ -21,7 +42,7 @@ export default {
       type: Boolean,
       required: true
     },
-    analyzes: {
+    imagesToAnalyze: {
       type: Array,
       required: true
     }
@@ -34,14 +55,39 @@ export default {
       error: 0
     }
   },
-  methods: {
-    countAnalyzes () {
-      for (let analyze of this.analyzes) {
-        analyze === 'Normal' ? this.normal++ : this.normal++
-        this.count++
-      }
-      this.analyzing = false
+  computed: {
+    imagesToAnalizeLength () {
+      return this.imagesToAnalyze.length
     }
+  },
+  methods: {
+    async analyzeImages () {
+      try {
+        for (let image of this.imagesToAnalyze) {
+          let body = { img: image.image_path }
+          let analyzedImage = await analyze(body)
+          let condition = analyzedImage.data.condition
+          if (condition === 'Normal') {
+            this.normal++
+          } else {
+            this.error++
+          }
+          this.count++
+        }
+        this.analyzing = false
+        this.$emit('cleanImagesToAnalyze')
+      } catch (err) {
+        throw err
+      }
+    },
+    close () {
+      this.$emit('close-cnn-dialog')
+    }
+  },
+  beforeDestroyed () {
+    this.count = 0
+    this.normal = 0
+    this.error = 0
   }
 }
 </script>
@@ -55,4 +101,7 @@ export default {
 .btn
   padding 10px 25px
   border-radius 20px !important
+
+.display-none
+  display hidden
 </style>
