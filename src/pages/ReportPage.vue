@@ -2,8 +2,15 @@
   q-page.report-page.full-width.q-py-lg.q-mb-xl.flex.items-center
     error-modal(
       :visibility="errorVisibility"
-      async @change-visibility="changeErrorModalVisibility"
+      @change-visibility="changeErrorModalVisibility"
       @send-error-name="setErrorName"
+    )
+    cnn-analyzer(
+      ref="cnnAnalyzer"
+      :opened="cnnDialogOpened"
+      :images-to-analyze="imagesToAnalyze"
+      @close-cnn-dialog="cnnDialogOpened = false"
+      @clean-images-to-analyze="cleanImagesToAnalyze = []"
     )
     div(ref="robot").full-width.flex.q-mb-lg
       div.full-width.cable.bg-grey-7.q-my-lg
@@ -18,20 +25,12 @@
           span {{ endPosition }}cm
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte do sensor
-        //- div.value.text-center.text-white
-        //-   span {{ (!reporting && !reportCreated) ? '-' : 'Normal' }}
         div(:class="[ getColor ]").value.text-center.text-white
           span {{ (!reporting && !reportCreated) ? '-' : currentSensorState }}
       div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
         div.label.text-grey-4.q-mb-sm Reporte manual
         div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
           span {{ (!reporting && !reportCreated) ? '-' : manualError }}
-      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
-        div.label.text-grey-4 Rede Neural
-        div(v-if="!reporting && !reportCreated").position.text-center.text-white -
-        div(v-else).text-center.text-white
-          span.value 0
-          div imagens analisadas
     div.full-width.flex
       image-renderer
       div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
@@ -87,7 +86,6 @@
 
 <script>
 import { start, pause, direction, reset } from '../api/commands'
-import analyze from '../api/analyze'
 import { mapGetters, mapActions } from 'vuex'
 
 import CREATE_REPORT from '../graphql/mutations/create-report.gql'
@@ -100,7 +98,8 @@ export default {
   name: 'ReportPage',
   components: {
     ImageRenderer: () => import('../components/ImageRender'),
-    ErrorModal: () => import('../components/report-page/ErrorModal')
+    ErrorModal: () => import('../components/report-page/ErrorModal'),
+    CnnAnalyzer: () => import('../components/report-page/CnnAnalyzerDialog')
   },
   apollo: {
     $subscribe: {
@@ -138,8 +137,10 @@ export default {
   },
   data () {
     return {
-      imagesToAnalyse: [],
+      imagesToAnalyze: [],
       analyzes: [],
+      analyzedImagesCount: [],
+      cnnDialogOpened: false,
       reportCreated: false,
       reporting: false,
       errorVisibility: false,
@@ -266,7 +267,8 @@ export default {
         this.reportId = ''
         this.cleanErrorAlerts()
         this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
-        await this.analyzeImages()
+        this.cnnDialogOpened = true
+        await this.$refs.cnnAnalyzer.analyzeImages()
       } catch (err) {
         this.reporting = false
         console.log(err)
@@ -336,24 +338,10 @@ export default {
       }
     },
     saveAnalysisImages () {
-      this.imagesToAnalyse.push({
+      this.imagesToAnalyze.push({
         id: (this.currentAnalysis || {}).id,
         image_path: (this.currentAnalysis || {}).image_path.replace('/server', '')
       })
-    },
-    async analyzeImages () {
-      try {
-        for (let image of this.imagesToAnalyse) {
-          let body = { img: image.image_path }
-          let analyzedImage = await analyze(body)
-          let condition = analyzedImage.data.condition
-          console.log(condition)
-          this.analyzes.push()
-        }
-        this.imagesToAnalyse = []
-      } catch (err) {
-        throw err
-      }
     }
   },
   mounted () {
