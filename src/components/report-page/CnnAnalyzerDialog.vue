@@ -10,21 +10,22 @@
           span {{ count }}
           span /
           span {{ imagesToAnalizeLength }}
-        div.text-body1.text-center.q-mb-xl fotos analisadas
+        div.text-body1.text-center.q-mb-lg fotos analisadas
       div(v-else).column.items-center.text-white.q-pa-md.animate-fade
         div.flex.q-mb-lg.q-mt-md
-          q-img(src="../../assets/logo3.png").q-mb-lg
-          div.text-h2.text-center.text-bold.q-mr-sm
+          q-img(src="../../assets/logo3.png").q-mb-lg.img
+          div.text-h1.text-center.text-bold.q-mr-sm
             span {{ imagesToAnalizeLength }}
           div.column.justify-center
-            div.text-body1.text-center fotos analisadas
-            div.text-body1.text-center pela Rede Neural
+            div.text-body1 posições do cabo
+            div.text-body1 analisadas pela
+            div.text-body1 Rede Neural
         div.flex.text-h5.q-mb-xs
           span.text-positive.q-pr-sm.text-bold Normal:
-          span.text-white {{ normal }} fotos
+          span.text-white {{ normal }} posiçoes
         div.flex.text-h5.q-mb-xl
           span.text-yellow-9.q-pr-sm.text-bold Danificado:
-          span.text-white {{ error }} fotos
+          span.text-white {{ error }} posiçoes
         q-btn(
           color="accent"
           no-caps
@@ -64,9 +65,7 @@ export default {
     async analyzeImages () {
       try {
         for (let image of this.imagesToAnalyze) {
-          let body = { img: image.image_path }
-          let analyzedImage = await analyze(body)
-          let condition = analyzedImage.data.condition
+          let condition = await this.analyzeFolderImages(image.path)
           if (condition === 'Normal') {
             this.normal++
           } else {
@@ -74,20 +73,29 @@ export default {
           }
           this.count++
         }
-        this.analyzing = false
-        this.$emit('cleanImagesToAnalyze')
+        this.$emit('clean-images-to-analyze')
       } catch (err) {
         throw err
+      } finally {
+        this.analyzing = false
       }
+    },
+    async analyzeFolderImages (path) {
+      let condition = 'Normal'
+      for (let p = 1; p <= 4; p++) {
+        let image = path + `imagem-cam-${p}.png`
+        let body = { img: image }
+        let analyzedImage = await analyze(body)
+        let condition = analyzedImage.data.condition
+        if (condition === 'Danificado') {
+          return condition
+        }
+      }
+      return condition
     },
     close () {
       this.$emit('close-cnn-dialog')
     }
-  },
-  beforeDestroyed () {
-    this.count = 0
-    this.normal = 0
-    this.error = 0
   }
 }
 </script>
@@ -102,6 +110,6 @@ export default {
   padding 10px 25px
   border-radius 20px !important
 
-.display-none
-  display hidden
+.img
+  max-width 250px
 </style>
