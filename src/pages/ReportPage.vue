@@ -87,6 +87,7 @@
 <script>
 import { start, pause, direction, reset } from '../api/commands'
 import { mapGetters, mapActions } from 'vuex'
+import { DateTime } from 'luxon'
 
 import CREATE_REPORT from '../graphql/mutations/create-report.gql'
 import UPDATE_CABLE from '../graphql/mutations/update-cable.gql'
@@ -137,6 +138,8 @@ export default {
   },
   data () {
     return {
+      hasManualError: false,
+      hasError: false,
       imagesToAnalyze: [],
       analyzes: [],
       analyzedImagesCount: [],
@@ -222,6 +225,7 @@ export default {
       }
       let isError = (this.currentSensorState === 'Danificado' || this.currentSensorState === 'Muito danificado')
       if (isError) {
+        this.hasError = true
         this.createCableAlert(color[this.currentSensorState])
         this.errorIds.push(this.currentAnalysis.id)
       }
@@ -269,6 +273,8 @@ export default {
         this.$q.notify({ message: 'Monitoramento encerrado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
         this.cnnDialogOpened = true
         await this.$refs.cnnAnalyzer.analyzeImages()
+        this.hasError = false
+        this.hasManualError = false
       } catch (err) {
         this.reporting = false
         console.log(err)
@@ -285,6 +291,7 @@ export default {
       this.errorVisibility = value
     },
     setErrorName (error) {
+      this.hasManualError = true
       this.manualErrorName = error
     },
     async createReport () {
@@ -311,12 +318,21 @@ export default {
     },
     async updateCable () {
       try {
+        let variables = { id: this.currentCable.id }
+        if (this.hasManualError || this.hasError) {
+          variables.generalState = 'Danificado'
+          variables.lifespan = 0
+        } else {
+          variables.generalState = 'Normal'
+          let created = DateTime.fromISO(this.currentCable.created_at)
+          let today = 1
+          let diff = created.diffNow('days').toObject()
+          variables.lifespan = parseInt(this.currentCable.lifespan + today + diff.days)
+        }
+
         let { data } = await this.$apollo.mutate({
           mutation: UPDATE_CABLE,
-          variables: {
-            id: this.currentCable.id,
-            generalState: 'Normal'
-          }
+          variables
         })
         this.setCurrentCable(data.updateCable)
       } catch (err) {

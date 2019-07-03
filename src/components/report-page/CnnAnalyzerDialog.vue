@@ -15,17 +15,21 @@
         div.flex.q-mb-lg.q-mt-md
           q-img(src="../../assets/logo3.png").q-mb-lg.img
           div.text-h1.text-center.text-bold.q-mr-sm
-            span {{ imagesToAnalizeLength }}
+            span {{ count }}
           div.column.justify-center
             div.text-body1 posições do cabo
             div.text-body1 analisadas pela
             div.text-body1 Rede Neural
         div.flex.text-h5.q-mb-xs
           span.text-positive.q-pr-sm.text-bold Normal:
-          span.text-white {{ normal }} posiçoes
+          span.text-white.q-pr-xs {{ normal }}
+          span(v-if="normal.length === 1").text-white posição
+          span(v-else).text-white posições
         div.flex.text-h5.q-mb-xl
-          span.text-yellow-9.q-pr-sm.text-bold Danificado:
-          span.text-white {{ error }} posiçoes
+          span.text-red-6.q-pr-sm.text-bold Danificado:
+          span.text-white.q-pr-xs {{ error }}
+          span(v-if="error.length === 1").text-white posição
+          span(v-else).text-white posições
         q-btn(
           color="accent"
           no-caps

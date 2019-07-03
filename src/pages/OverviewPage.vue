@@ -13,12 +13,12 @@
             | (Faça um monitoramento)
         div.card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 Vida útil
-          h1(v-if="cable.lifespan").text-bold
+          div(v-if="cable.lifespan === null").text-yellow-9.text-center.q-mt-md.q-pb-sm Informação indisponível
+          h1(v-else).text-bold
             | {{ cable.lifespan }}
             span.unity.q-ml-sm
               | dia
-              span(v-if="cable.lifespan > 1") s
-          div(v-else).text-yellow-9.text-center.q-mt-md.q-pb-sm Informação indisponível
+              span(v-if="cable.lifespan !== 1") s
         div.card.q-pa-lg.bg-primary.flex-1.q-ma-sm.shadow-global
           h4.text-grey-3 Tamanho
           h1(v-if="cable.size").text-bold
@@ -31,7 +31,7 @@
             | Informação indisponível
             br
             | (Faça um monitoramento)
-          h1(v-else :class="generalStateColor").text-bold
+          h1(v-else :class="alertLevelColor").text-bold
             | {{ alertLevel[cable.general_state] }}
       reports-list
 </template>
@@ -51,8 +51,7 @@ export default {
     return {
       alertLevel: {
         'Normal': 'Baixo',
-        'Danificado': 'Atenção',
-        'Descartável': 'Máximo'
+        'Danificado': 'Descarte Imediato'
       }
     }
   },
@@ -66,8 +65,17 @@ export default {
     generalStateColor () {
       return {
         'text-positive': this.cable.general_state === 'Normal',
-        'text-yellow-9': this.cable.general_state === 'Danificado',
-        'text-red-6': this.cable.general_state === 'Descartável'
+        'text-red-6': this.cable.general_state === 'Danificado'
+      }
+    },
+    damagedCable () {
+      return this.cable.general_state === 'Danificado'
+    },
+    alertLevelColor () {
+      if (this.damagedCable) {
+        return ['text-red-6', 'damaged-alert']
+      } else {
+        return 'text-positive'
       }
     }
   }
@@ -112,4 +120,9 @@ export default {
 
 .unity
   font-size 18px
+
+.damaged-alert
+  font-size 22px !important
+  line-height 22px !important
+  margin-top 22px !important
 </style>

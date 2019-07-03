@@ -6,5 +6,6 @@ query cables {
     lifespan
     size
     diameter
+    created_at
   }
 }
