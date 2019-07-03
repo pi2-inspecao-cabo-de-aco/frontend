@@ -23,12 +23,12 @@
         div.flex.text-h5.q-mb-xs
           span.text-positive.q-pr-sm.text-bold Normal:
           span.text-white.q-pr-xs {{ normal }}
-          span(v-if="normal.length === 1").text-white posição
+          span(v-if="normal === 1").text-white posição
           span(v-else).text-white posições
         div.flex.text-h5.q-mb-xl
           span.text-red-6.q-pr-sm.text-bold Danificado:
           span.text-white.q-pr-xs {{ error }}
-          span(v-if="error.length === 1").text-white posição
+          span(v-if="error === 1").text-white posição
           span(v-else).text-white posições
         q-btn(
           color="accent"
