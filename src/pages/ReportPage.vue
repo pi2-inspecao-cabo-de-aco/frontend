@@ -274,7 +274,7 @@ export default {
         } else {
           this.reporting = !this.reporting
           // await pause()
-          await this.sendCommand(0)
+          await this.sendCommand(1)
         }
       } catch (err) {
         this.reporting = false
@@ -296,7 +296,7 @@ export default {
     async sendResetCommand () {
       try {
         // await reset()
-        await this.sendCommand(1)
+        await this.sendCommand(0)
         this.reporting = false
         this.reportCreated = false
         this.updateCable()
