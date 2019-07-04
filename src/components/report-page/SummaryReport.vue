@@ -1,13 +1,18 @@
 <template lang="pug">
   div.full-width.column.items-centers
-    div(v-if="percentage < 70").card.q-pa-sm.text-center.text-white.q-mb-lg.bg-yellow-9.shadow-global.animate-pop
-      | O robô só percorreu {{ percentage }}% do cabo. Para uma análise mais precisa, faça um monitoramento completo.
+    div(v-if="percentage < 0.7").card.q-pa-sm.text-center.text-white.q-mb-lg.bg-yellow-9.shadow-global.animate-pop
+      | O robô só percorreu {{ percentage * 100 }}% do cabo. Para uma análise mais precisa, faça um monitoramento completo.
     div.full-width.flex
       div.column.flex-1.q-mr-md
-        div.bg-primary.card.shadow-global.flex-1.q-pa-md.q-mb-md
-          div.label.text-grey-4.q-mb-sm Status Geral
-          div.position.text-center.text-white
-            span(:class="generalStateColor") {{ currentCable.general_state }}
+        div.full-width.flex.q-mb-md
+          div.bg-primary.card.shadow-global.flex-1.q-pa-md.q-mr-md
+            div.label.text-grey-4.q-mb-sm Status Geral
+            div.position.text-center.text-white
+              span(:class="generalStateColor") {{ currentCable.general_state }}
+          div.bg-primary.card.shadow-global.flex-1.q-pa-md
+            div.label.text-grey-4.q-mb-sm Recomendação
+            div.text-h6.text-bold.text-center.text-white.q-mt-sm
+              span(:class="alertLevelColor") {{ alertLevel[currentCable.general_state] }}
         div.full-width.flex.q-mb-md
           div.bg-primary.card.shadow-global.flex-1.q-pa-md.q-mr-md
             div.label.text-grey-4.q-mb-sm Estado normal
@@ -41,17 +46,18 @@
               span.text-red-6 {{ (rnaAnalyze || {}).error }}
               span.text-body1.q-ml-xs.text-white posições
       div.column.image
-        q-img(src="../../assets/cable-placeholder2.png" spinner-color="grey-1" :ratio="1").shadow-global.card.q-mb-md
+        q-img(:src="imagePath || '../../assets/cable-placeholder2.png'" transition="slide-left" spinner-color="grey-1" :ratio="1").shadow-global.card.q-mb-md
         div.bg-primary.card.shadow-global.flex-1.q-pa-md
-          div.label.text-grey-4.q-mb-sm Recomendação
+          div.label.text-grey-4.q-mb-sm
+           | Condição do cabo na posição {{ (currentAnalysis || {}).position_start }} à {{ (currentAnalysis || {}).position_end }} mm
           div.position.text-center.text-white
-            span(:class="alertLevelColor") {{ alertLevel[currentCable.general_state] }}
+            div.text-h5.text-bold.text-center.text-white.q-mt-md
+              span(:class="alertLevelColor") {{ (currentAnalysis || {}).state }}
     div.full-width.flex.item-center.q-mt-lg.justify-center
       q-btn(color="accent" no-caps @click="$router.push('/overview')").no-shadow.btn Sair
 </template>
 
 <script>
-import ANALYSIS from '../../graphql/queries/analysis.gql'
 import REPORT_COMPLETE from '../../graphql/queries/report-complete.gql'
 import REPORT_ERRORS from '../../graphql/queries/report-errors.gql'
 import { mapGetters } from 'vuex'
@@ -67,6 +73,10 @@ export default {
     rnaAnalyze: {
       type: Object,
       required: true
+    },
+    analysisLength: {
+      type: Number,
+      default: 0
     }
   },
   apollo: {
@@ -78,17 +88,8 @@ export default {
         },
         fetchPolicy: 'network-only',
         update (data) {
+          this.analyzesSize = data.reportComplete.analysis.length
           return data.reportComplete
-        }
-      }
-    },
-    analysis () {
-      return {
-        query: ANALYSIS,
-        skip: true,
-        fetchPolicy: 'network-only',
-        update (data) {
-          return data.analysis
         }
       }
     },
@@ -107,7 +108,8 @@ export default {
   },
   data () {
     return {
-      analysis: {},
+      analyzesSize: 0,
+      analysisPosition: 0,
       states: {},
       alertLevel: {
         'Normal': 'Uso normal do cabo',
@@ -148,6 +150,29 @@ export default {
         'text-positive': this.currentCable.general_state === 'Normal',
         'text-yellow-9': this.currentCable.general_state === 'Danificado'
       }
+    },
+    analysisColor () {
+      return {
+        'text-positive': this.currentAnalysis.state === 'Normal',
+        'text-red-6': this.currentAnalysis.state === 'Danificado'
+      }
+    },
+    currentAnalysis () {
+      return (this.reportAnalysis || [])[this.analysisPosition]
+    },
+    imagePath () {
+      return (this.currentAnalysis || { image_path: '' }).image_path.replace('/server', '')
+    }
+  },
+  mounted () {
+    if (this.analysisLength > 1) {
+      setInterval(() => {
+        if (this.analysisPosition < this.analysisLength - 1) {
+          this.analysisPosition++
+        } else {
+          this.analysisPosition = 0
+        }
+      }, 3000)
     }
   }
 }

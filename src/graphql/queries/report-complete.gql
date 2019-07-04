@@ -8,6 +8,8 @@ query reportComplete ($id: ID!) {
       position_start
       position_end
       manual_state
+      image_path
+      state
     }
   }
 }

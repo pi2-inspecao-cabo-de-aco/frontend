@@ -12,7 +12,8 @@
       @close-cnn-dialog="cnnDialogOpened = false"
       @clean-images-to-analyze="imagesToAnalyze = []"
       @open-summary="summaryPage = true"
-      @upload-rna-analyze="uploadRnaAnalyze"
+      @update-rna-analyze="updateRnaAnalyze"
+      @update-analysis-length="updateAnalysisLength"
     )
     div(v-if="!summaryPage").full-width.flex.items-center
       div(ref="robot").full-width.flex.q-mb-lg
@@ -89,6 +90,7 @@
       v-else
       :percentage="percentage"
       :rna-analyze="rnaAnalyze"
+      :analysis-length="analysisLength"
     )
 </template>
 
@@ -147,6 +149,7 @@ export default {
   },
   data () {
     return {
+      analysisLength: 0,
       rnaAnalyze: {},
       summaryPage: false,
       hasManualError: false,
@@ -208,7 +211,7 @@ export default {
       return `${position}px`
     },
     percentage () {
-      return ((this.position.end || 0) / this.position.end) * 100
+      return ((this.position.end || 0) / this.cableSize) / 10
     }
   },
   methods: {
@@ -384,8 +387,11 @@ export default {
         path: this.fixPath((this.currentAnalysis || {}).image_path)
       })
     },
-    uploadRnaAnalyze (analyze) {
+    updateRnaAnalyze (analyze) {
       this.rnaAnalyze = analyze
+    },
+    updateAnalysisLength (length) {
+      this.analysisLength = length
     }
   },
   mounted () {

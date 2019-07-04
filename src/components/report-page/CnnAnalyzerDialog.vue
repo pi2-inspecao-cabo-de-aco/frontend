@@ -79,8 +79,9 @@ export default {
           }
           this.count++
         }
+        this.$emit('update-analysis-length', this.imagesToAnalyze.length)
         this.$emit('clean-images-to-analyze')
-        this.$emit('upload-rna-analyze', {
+        this.$emit('update-rna-analyze', {
           normal: this.normal,
           error: this.error
         })
