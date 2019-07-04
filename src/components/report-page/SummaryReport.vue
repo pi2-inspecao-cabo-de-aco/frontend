@@ -7,7 +7,7 @@
         div.bg-primary.card.shadow-global.flex-1.q-pa-md.q-mb-md
           div.label.text-grey-4.q-mb-sm Status Geral
           div.position.text-center.text-white
-            span.text-red-6 {{ currentCable.general_state }}
+            span(:class="generalStateColor") {{ currentCable.general_state }}
         div.full-width.flex.q-mb-md
           div.bg-primary.card.shadow-global.flex-1.q-pa-md.q-mr-md
             div.label.text-grey-4.q-mb-sm Estado normal
@@ -33,19 +33,19 @@
           div.bg-primary.card.shadow-global.flex-1.q-pa-md.q-mr-md
             div.label.text-grey-4.q-mb-sm Estado normal (RNA)
             div.position.text-center
-              span.text-positive 10
+              span.text-positive {{ (rnaAnalyze || {}).normal }}
               span.text-body1.q-ml-xs.text-white posições
           div.bg-primary.card.shadow-global.flex-1.q-pa-md
             div.label.text-grey-4.q-mb-sm Estado danificado (RNA)
             div.position.text-center
-              span.text-red-6 10
+              span.text-red-6 {{ (rnaAnalyze || {}).error }}
               span.text-body1.q-ml-xs.text-white posições
       div.column.image
         q-img(src="../../assets/cable-placeholder2.png" spinner-color="grey-1" :ratio="1").shadow-global.card.q-mb-md
         div.bg-primary.card.shadow-global.flex-1.q-pa-md
           div.label.text-grey-4.q-mb-sm Recomendação
           div.position.text-center.text-white
-            span.text-yellow-9 {{ alertLevel[currentCable.general_state] }}
+            span(:class="alertLevelColor") {{ alertLevel[currentCable.general_state] }}
     div.full-width.flex.item-center.q-mt-lg.justify-center
       q-btn(color="accent" no-caps @click="$router.push('/overview')").no-shadow.btn Sair
 </template>
@@ -62,6 +62,10 @@ export default {
   props: {
     percentage: {
       type: Number,
+      required: true
+    },
+    rnaAnalyze: {
+      type: Object,
       required: true
     }
   },
@@ -119,7 +123,7 @@ export default {
       'currentReportId'
     ]),
     reportAnalysis () {
-      return this.report.analysis || []
+      return (this.report || { analysis: [] }).analysis
     },
     totalTime () {
       let start = new Date((this.report || {}).start)
@@ -129,7 +133,21 @@ export default {
       return d.toFormat('mm:ss')
     },
     manualStateCount () {
-      return 0
+      return this.reportAnalysis.filter((ra) => {
+        return ra.manual_state
+      }).length
+    },
+    generalStateColor () {
+      return {
+        'text-positive': this.currentCable.general_state === 'Normal',
+        'text-red-6': this.currentCable.general_state === 'Danificado'
+      }
+    },
+    alertLevelColor () {
+      return {
+        'text-positive': this.currentCable.general_state === 'Normal',
+        'text-yellow-9': this.currentCable.general_state === 'Danificado'
+      }
     }
   }
 }

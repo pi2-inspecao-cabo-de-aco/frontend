@@ -12,6 +12,7 @@
       @close-cnn-dialog="cnnDialogOpened = false"
       @clean-images-to-analyze="imagesToAnalyze = []"
       @open-summary="summaryPage = true"
+      @upload-rna-analyze="uploadRnaAnalyze"
     )
     div(v-if="!summaryPage").full-width.flex.items-center
       div(ref="robot").full-width.flex.q-mb-lg
@@ -84,7 +85,11 @@
               icon="mdi-stop"
               size="32px"
             ).shadow-global
-    summary-report(v-else :percentage="percentage")
+    summary-report(
+      v-else
+      :percentage="percentage"
+      :rna-analyze="rnaAnalyze"
+    )
 </template>
 
 <script>
@@ -142,6 +147,7 @@ export default {
   },
   data () {
     return {
+      rnaAnalyze: {},
       summaryPage: false,
       hasManualError: false,
       hasError: false,
@@ -377,6 +383,9 @@ export default {
         id: (this.currentAnalysis || {}).id,
         path: this.fixPath((this.currentAnalysis || {}).image_path)
       })
+    },
+    uploadRnaAnalyze (analyze) {
+      this.rnaAnalyze = analyze
     }
   },
   mounted () {

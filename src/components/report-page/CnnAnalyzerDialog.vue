@@ -80,6 +80,10 @@ export default {
           this.count++
         }
         this.$emit('clean-images-to-analyze')
+        this.$emit('upload-rna-analyze', {
+          normal: this.normal,
+          error: this.error
+        })
       } catch (err) {
         throw err
       } finally {
