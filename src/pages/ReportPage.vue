@@ -11,6 +11,7 @@
       :images-to-analyze="imagesToAnalyze"
       @close-cnn-dialog="cnnDialogOpened = false"
       @clean-images-to-analyze="imagesToAnalyze = []"
+      @open-summary="summaryPage = true"
     )
     div(v-if="!summaryPage").full-width.flex.items-center
       div(ref="robot").full-width.flex.q-mb-lg
@@ -83,7 +84,7 @@
               icon="mdi-stop"
               size="32px"
             ).shadow-global
-    summary-report(v-else)
+    summary-report(v-else :percentage="percentage")
 </template>
 
 <script>
@@ -141,7 +142,7 @@ export default {
   },
   data () {
     return {
-      summaryPage: true,
+      summaryPage: false,
       hasManualError: false,
       hasError: false,
       imagesToAnalyze: [],
@@ -210,6 +211,9 @@ export default {
     ]),
     ...mapActions('analysis', [
       'setCurrentAnalysis'
+    ]),
+    ...mapActions('reports', [
+      'setCurrentReportId'
     ]),
     createCableAlert (color) {
       let cable = this.$refs.robot
@@ -311,6 +315,7 @@ export default {
             }
           })
           this.reportId = data.createReport
+          this.setCurrentReportId(data.createReport)
           this.$q.notify({ message: 'Monitoramento iniciado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
           this.reportCreated = true
           this.reporting = true

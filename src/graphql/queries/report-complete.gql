@@ -3,7 +3,6 @@ query reportComplete ($id: ID!) {
     id
     start
     end
-    alert_level
     analysis {
       id
       position_start

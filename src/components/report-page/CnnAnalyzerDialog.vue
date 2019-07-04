@@ -101,6 +101,7 @@ export default {
     },
     close () {
       this.$emit('close-cnn-dialog')
+      this.$emit('open-summary')
     },
     resetValues () {
       this.count = 0

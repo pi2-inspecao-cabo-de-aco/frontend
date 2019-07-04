@@ -3,6 +3,5 @@ query report ($id: ID!) {
     id
     start
     end
-    alert_level
   }
 }
