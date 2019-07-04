@@ -79,7 +79,12 @@ export default {
           }
           this.count++
         }
+        this.$emit('update-analysis-length', this.imagesToAnalyze.length)
         this.$emit('clean-images-to-analyze')
+        this.$emit('update-rna-analyze', {
+          normal: this.normal,
+          error: this.error
+        })
       } catch (err) {
         throw err
       } finally {
@@ -101,6 +106,7 @@ export default {
     },
     close () {
       this.$emit('close-cnn-dialog')
+      this.$emit('open-summary')
     },
     resetValues () {
       this.count = 0

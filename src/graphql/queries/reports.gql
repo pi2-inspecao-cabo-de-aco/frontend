@@ -3,6 +3,5 @@ query reports ($cableId: ID!) {
     id
     start
     end
-    alert_level
   }
 }

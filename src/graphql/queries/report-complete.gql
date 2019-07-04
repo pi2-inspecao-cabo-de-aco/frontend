@@ -3,12 +3,13 @@ query reportComplete ($id: ID!) {
     id
     start
     end
-    alert_level
     analysis {
       id
       position_start
       position_end
       manual_state
+      image_path
+      state
     }
   }
 }

@@ -11,77 +11,87 @@
       :images-to-analyze="imagesToAnalyze"
       @close-cnn-dialog="cnnDialogOpened = false"
       @clean-images-to-analyze="imagesToAnalyze = []"
+      @open-summary="summaryPage = true"
+      @update-rna-analyze="updateRnaAnalyze"
+      @update-analysis-length="updateAnalysisLength"
     )
-    div(ref="robot").full-width.flex.q-mb-lg
-      div.full-width.cable.bg-grey-7.q-my-lg
-      q-img(src="../assets/robo2.png" :style="{ marginLeft: robotPosition }" spinner-color="grey-1").robot
-    div.full-width.q-mb-lg.flex
-      div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
-        div.label.text-grey-4.q-mb-sm Posição
-        div(v-if="!reporting && !reportCreated").position.text-center.text-white -
-        div(v-else).position.text-center.text-white
-          span {{ startPosition }}
-          span.q-mx-sm -
-          span {{ endPosition }}cm
-      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
-        div.label.text-grey-4.q-mb-sm Reporte do sensor
-        div(:class="[ getColor ]").value.text-center.text-white
-          span {{ (!reporting && !reportCreated) ? '-' : currentSensorState }}
-      div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
-        div.label.text-grey-4.q-mb-sm Reporte manual
-        div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
-          span {{ (!reporting && !reportCreated) ? '-' : manualError }}
-    div.full-width.flex
-      image-renderer
-      div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
-        q-btn(
-          @click="createReport"
-          color="accent"
-          no-caps
-          size="20px"
-        ).no-shadow.btn.animate-pop Iniciar Monitoramento
-      div(v-else).report-content.flex-1.justify-center.column.animate-pop
-        div.flex.justify-center.q-mb-md
+    div(v-if="!summaryPage").full-width.flex.items-center
+      div(ref="robot").full-width.flex.q-mb-lg
+        div.full-width.cable.bg-grey-7.q-my-lg
+        q-img(src="../assets/robo2.png" :style="{ marginLeft: robotPosition }" spinner-color="grey-1").robot
+      div.full-width.q-mb-lg.flex
+        div.q-mr-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
+          div.label.text-grey-4.q-mb-sm Posição
+          div(v-if="!reporting && !reportCreated").position.text-center.text-white -
+          div(v-else).position.text-center.text-white
+            span {{ startPosition }}
+            span.q-mx-sm -
+            span {{ endPosition }}cm
+        div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
+          div.label.text-grey-4.q-mb-sm Reporte do sensor
+          div(:class="[ getColor ]").value.text-center.text-white
+            span {{ (!reporting && !reportCreated) ? '-' : currentSensorState }}
+        div.q-ml-sm.flex-1.column.bg-primary.flex.card.shadow-global.q-pa-md
+          div.label.text-grey-4.q-mb-sm Reporte manual
+          div(:class="{ 'text-yellow-9': manualErrorName }").value.text-center.text-white
+            span {{ (!reporting && !reportCreated) ? '-' : manualError }}
+      div.full-width.flex
+        image-renderer
+        div(v-if="!reportCreated").report-content.flex-1.justify-center.column.items-center
           q-btn(
-            @click="sendStartOrPauseCommand"
-            :color="reporting ? 'grey-5' : 'positive'"
-            round
-            :icon="reporting ? 'mdi-pause' : 'mdi-play'"
-            :disabled="finished"
-            size="32px"
-          ).shadow-global
-        div.flex.items-center.justify-center
-          q-btn(
-            @click="sendDirectionCommand('left')"
-            color="primary"
-            round
-            icon="mdi-arrow-left-bold"
-            size="32px"
-          ).shadow-global
-          q-btn(
-            title="Reportar Erro"
-            async @click="changeErrorModalVisibility(true)"
-            color="warning"
-            round
-            icon="mdi-alert-circle"
-            size="38px"
-          ).q-mx-md.shadow-global
-          q-btn(
-            @click="sendDirectionCommand('right')"
-            color="primary"
-            round
-            icon="mdi-arrow-right-bold"
-            size="32px"
-            :disabled="isEndCable || finished"
-          ).shadow-global
-        div.column.items-center.justify-center.q-mt-md
-          q-btn(
-            @click="sendResetCommand"
-            color="negative"
-            round
-            icon="mdi-stop"
-            size="32px"
-          ).shadow-global
+            @click="createReport"
+            color="accent"
+            no-caps
+            size="20px"
+          ).no-shadow.btn.animate-pop Iniciar Monitoramento
+        div(v-else).report-content.flex-1.justify-center.column.animate-pop
+          div.flex.justify-center.q-mb-md
+            q-btn(
+              @click="sendStartOrPauseCommand"
+              :color="reporting ? 'grey-5' : 'positive'"
+              round
+              :icon="reporting ? 'mdi-pause' : 'mdi-play'"
+              :disabled="finished"
+              size="32px"
+            ).shadow-global
+          div.flex.items-center.justify-center
+            q-btn(
+              @click="sendDirectionCommand('left')"
+              color="primary"
+              round
+              icon="mdi-arrow-left-bold"
+              size="32px"
+            ).shadow-global
+            q-btn(
+              title="Reportar Erro"
+              async @click="changeErrorModalVisibility(true)"
+              color="warning"
+              round
+              icon="mdi-alert-circle"
+              size="38px"
+            ).q-mx-md.shadow-global
+            q-btn(
+              @click="sendDirectionCommand('right')"
+              color="primary"
+              round
+              icon="mdi-arrow-right-bold"
+              size="32px"
+              :disabled="isEndCable || finished"
+            ).shadow-global
+          div.column.items-center.justify-center.q-mt-md
+            q-btn(
+              @click="sendResetCommand"
+              color="negative"
+              round
+              icon="mdi-stop"
+              size="32px"
+            ).shadow-global
+    summary-report(
+      v-else
+      :percentage="percentage"
+      :rna-analyze="rnaAnalyze"
+      :analysis-length="analysisLength"
+    )
 </template>
 
 <script>
@@ -100,7 +110,8 @@ export default {
   components: {
     ImageRenderer: () => import('../components/ImageRender'),
     ErrorModal: () => import('../components/report-page/ErrorModal'),
-    CnnAnalyzer: () => import('../components/report-page/CnnAnalyzerDialog')
+    CnnAnalyzer: () => import('../components/report-page/CnnAnalyzerDialog'),
+    SummaryReport: () => import('../components/report-page/SummaryReport')
   },
   apollo: {
     $subscribe: {
@@ -138,6 +149,9 @@ export default {
   },
   data () {
     return {
+      analysisLength: 0,
+      rnaAnalyze: {},
+      summaryPage: false,
       hasManualError: false,
       hasError: false,
       imagesToAnalyze: [],
@@ -195,6 +209,9 @@ export default {
       let width = this.robotDivSize - 150
       let position = ((this.startPosition + 2.5) / this.cableSize) * width
       return `${position}px`
+    },
+    percentage () {
+      return ((this.position.end || 0) / this.cableSize) / 10
     }
   },
   methods: {
@@ -203,6 +220,9 @@ export default {
     ]),
     ...mapActions('analysis', [
       'setCurrentAnalysis'
+    ]),
+    ...mapActions('reports', [
+      'setCurrentReportId'
     ]),
     createCableAlert (color) {
       let cable = this.$refs.robot
@@ -304,6 +324,7 @@ export default {
             }
           })
           this.reportId = data.createReport
+          this.setCurrentReportId(data.createReport)
           this.$q.notify({ message: 'Monitoramento iniciado!', color: 'positive', icon: 'mdi-check', timeout: 1500 })
           this.reportCreated = true
           this.reporting = true
@@ -323,11 +344,14 @@ export default {
           variables.generalState = 'Danificado'
           variables.lifespan = 0
         } else {
-          variables.generalState = 'Normal'
           let created = DateTime.fromISO(this.currentCable.created_at)
           let today = 1
           let diff = created.diffNow('days').toObject()
           variables.lifespan = parseInt(this.currentCable.lifespan + today + diff.days)
+
+          if (this.percentage >= 0.7) {
+            variables.generalState = 'Normal'
+          }
         }
 
         let { data } = await this.$apollo.mutate({
@@ -362,10 +386,16 @@ export default {
         id: (this.currentAnalysis || {}).id,
         path: this.fixPath((this.currentAnalysis || {}).image_path)
       })
+    },
+    updateRnaAnalyze (analyze) {
+      this.rnaAnalyze = analyze
+    },
+    updateAnalysisLength (length) {
+      this.analysisLength = length
     }
   },
   mounted () {
-    this.robotDivSize = this.$refs.robot.clientWidth
+    this.robotDivSize = (this.$refs.robot || {}).clientWidth
   },
   watch: {
     position (val) {
