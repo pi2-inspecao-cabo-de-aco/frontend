@@ -45,18 +45,24 @@
             size="20px"
           ).no-shadow.btn.animate-pop Iniciar Monitoramento
         div(v-else).report-content.flex-1.justify-center.column.animate-pop
-          div.flex.justify-center.q-mb-md
+          div.flex.justify-center.q-mb-md.row
             q-btn(
-              @click="sendStartOrPauseCommand"
-              :color="reporting ? 'grey-5' : 'positive'"
+              @click="sendStartOrPauseCommand(4)"
+              color="positive"
               round
-              :icon="reporting ? 'mdi-pause' : 'mdi-play'"
-              :disabled="finished"
+              icon="mdi-play"
+              size="32px"
+            ).shadow-global.q-mr-lg
+            q-btn(
+              @click="sendStartOrPauseCommand(1)"
+              color="grey-5"
+              round
+              icon="mdi-pause"
               size="32px"
             ).shadow-global
           div.flex.items-center.justify-center
             q-btn(
-              @click="sendDirectionCommand('left')"
+              @click="sendDirectionCommand(3)"
               color="primary"
               round
               icon="mdi-arrow-left-bold"
@@ -71,7 +77,7 @@
               size="38px"
             ).q-mx-md.shadow-global
             q-btn(
-              @click="sendDirectionCommand('right')"
+              @click="sendDirectionCommand(2)"
               color="primary"
               round
               icon="mdi-arrow-right-bold"
@@ -265,20 +271,20 @@ export default {
       }
       this.errorIds = []
     },
-    async sendStartOrPauseCommand () {
+    async sendStartOrPauseCommand (value) {
       try {
-        if (!this.reporting) {
-          this.reporting = !this.reporting
-          // await start()
-          await this.sendCommand(4)
-        } else {
-          this.reporting = !this.reporting
-          // await pause()
-          await this.sendCommand(1)
-        }
+        await this.sendCommand(value)
+        // if (!this.reporting) {
+        //   this.reporting = !this.reporting
+        //   // await start()
+        // } else {
+        //   this.reporting = !this.reporting
+        //   // await pause()
+        //   await this.sendCommand(1)
+        // }
       } catch (err) {
-        this.reporting = false
-        throw err
+        // this.reporting = false
+        console.log(err)
       }
     },
     async sendDirectionCommand (orientation) {

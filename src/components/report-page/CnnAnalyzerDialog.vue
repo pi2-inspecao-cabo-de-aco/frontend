@@ -94,7 +94,7 @@ export default {
     async analyzeFolderImages (path) {
       let condition = 'Normal'
       for (let p = 1; p <= 4; p++) {
-        let image = path + `imagem-cam-${p}.png`
+        let image = path + `imagem-cam-${p}.jpg`
         let body = { img: image }
         let analyzedImage = await analyze(body)
         let condition = analyzedImage.data.condition
