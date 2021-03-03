@@ -45,7 +45,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "graphql-cli": "^3.0.11",
     "graphql-tag": "^2.10.1",
-    "pug": "^2.0.3",
+    "pug": "^3.0.1",
     "pug-plain-loader": "^1.0.0",
     "strip-ansi": "=3.0.1",
     "thread-loader": "^2.1.2"
